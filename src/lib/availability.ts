@@ -16,7 +16,9 @@ export function labelToMinutes(label: string): number | null {
   if (!match) return null;
   const h = parseInt(match[1], 10);
   const m = parseInt(match[2], 10);
-  if (h < 0 || h > 23 || m < 0 || m > 59) return null;
+
+  if (h > 23 || m > 59) return null;
+
   return h * 60 + m;
 }
 
@@ -43,11 +45,17 @@ export function checkAvailability(
     return { decision: 'unavailable', reason: 'Please select a room.' };
   }
 
-  // AC1: validate interval bounds
-  if (start < 0 || end > MINUTES_PER_DAY || start >= end) {
+  if (start >= end) {
     return {
       decision: 'unavailable',
-      reason: 'The start time must be earlier than the end time, and both must be between 00:00 and 24:00.',
+      reason: 'The start time must be earlier than the end time.',
+    };
+  }
+
+  if (start < 0 || end > MINUTES_PER_DAY) {
+    return {
+      decision: 'unavailable',
+      reason: 'Times must be between 00:00 and 24:00.',
     };
   }
 
