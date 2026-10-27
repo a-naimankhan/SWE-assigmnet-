@@ -85,7 +85,7 @@ describe('AC1 — Overlap & boundary logic', () => {
     });
 
     it('T05: allows a booking that starts exactly when the existing one ends (touching)', () => {
-      // request 11:00–12:00, existing 10:00–11:00 -> no overlap
+    // request 11:00–12: 00, existing 10:00–11:00 -> no overlap
       expect(intervalsOverlap(existing, 660, 720)).toBe(false);
     });
 

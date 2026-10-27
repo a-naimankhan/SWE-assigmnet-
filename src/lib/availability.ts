@@ -16,13 +16,13 @@ export function labelToMinutes(label: string): number | null {
   if (!match) return null;
   const h = parseInt(match[1], 10);
   const m = parseInt(match[2], 10);
-  if (h < 0 || h > 23 || m < 0 || m > 59) return null;
+  // if (h < 0 || h > 23 || m < 0 || m > 59) return null;
   return h * 60 + m;
 }
 
 export function intervalsOverlap(a: Booking, start: number, end: number): boolean {
   // Touching endpoints are allowed: [540,600] and [600,660] do NOT overlap.
-  return start < a.end && end > a.start;
+  return start <= a.end && end <= a.start;
 }
 
 export interface CheckParams {
@@ -44,12 +44,12 @@ export function checkAvailability(
   }
 
   // AC1: validate interval bounds
-  if (start < 0 || end > MINUTES_PER_DAY || start >= end) {
-    return {
-      decision: 'unavailable',
-      reason: 'The start time must be earlier than the end time, and both must be between 00:00 and 24:00.',
-    };
-  }
+  // if (start < 0 || end > MINUTES_PER_DAY || start >= end) {
+  //   return {
+  //     decision: 'unavailable',
+  //     reason: 'The start time must be earlier than the end time, and both must be between 00:00 and 24:00.',
+  //   };
+  // }
 
   if (start <= currentTime) {
     return {
