@@ -1,4 +1,4 @@
-import { minutesToLabel } from '@/lib/availability';
+import { minutesToLabel } from '@/domain/time';
 
 interface Props {
   value: string;

@@ -1,4 +1,4 @@
-import { Room } from './types';
+import { Room } from '@/domain/types';
 
 export const ROOMS: Room[] = [
   {

@@ -1,4 +1,4 @@
-import { Room } from '@/lib/types';
+import { Room } from '@/domain/types';
 import { Check, Lock, MapPin, Users } from 'lucide-react';
 
 interface Props {

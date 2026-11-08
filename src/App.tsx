@@ -1,21 +1,17 @@
 import { useMemo, useState } from 'react';
 import { CalendarClock, Clock, Search } from 'lucide-react';
-import { ROOMS } from '@/lib/data';
+import { ROOMS } from '@/data/rooms';
 import {
   CheckResult,
   Room,
-} from '@/lib/types';
-import {
-  MAX_BOOKING_MINUTES,
-  checkAvailability,
-  labelToMinutes,
-  minutesToLabel,
-} from '@/lib/availability';
+} from '@/domain/types';
+import { checkAvailability } from '@/domain/availability';
+import { MAX_BOOKING_MINUTES, labelToMinutes, minutesToLabel } from '@/domain/time';
 import { RoomSelector } from '@/components/RoomSelector';
 import { Timeline } from '@/components/Timeline';
 import { ResultPanel } from '@/components/ResultPanel';
 import { TimeField } from '@/components/TimeField';
-import { FIXED_NOW } from '@/lib/clock';
+import { FIXED_NOW } from '@/domain/clock';
 
 export default function App() {
   const [rooms] = useState<Room[]>(ROOMS);

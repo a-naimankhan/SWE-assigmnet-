@@ -1,5 +1,5 @@
-import { Booking } from '@/lib/types';
-import { MINUTES_PER_DAY, minutesToLabel } from '@/lib/availability';
+import { Booking } from '@/domain/types';
+import { MINUTES_PER_DAY, minutesToLabel } from '@/domain/time';
 
 interface Props {
   bookings: Booking[];

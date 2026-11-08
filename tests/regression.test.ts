@@ -1,15 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import {
-  MAX_BOOKING_MINUTES,
-  MINUTES_PER_DAY,
-  checkAvailability,
-  intervalsOverlap,
-  labelToMinutes,
-  minutesToLabel,
-  type CheckParams,
-} from '@/lib/availability';
-import { ROOMS } from '@/lib/data';
-import type { Booking, Room } from '@/lib/types';
+import { checkAvailability, intervalsOverlap, type CheckParams } from '@/domain/availability';
+import { MAX_BOOKING_MINUTES, MINUTES_PER_DAY, labelToMinutes, minutesToLabel } from '@/domain/time';
+import { ROOMS } from '@/data/rooms';
+import type { Booking, Room } from '@/domain/types';
 
 // ---------------------------------------------------------------------------
 // Test helpers / fixtures
