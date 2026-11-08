@@ -1,0 +1,12 @@
+Mutation check — 2026-11-08, run on the final code.
+Each rule was broken on purpose with sed, `npx vitest run` was run, then the file was restored with `git checkout`.
+A mutant is "killed" when at least one test fails.
+
+M1 overlap uses <= / >= (touching = conflict)         -> 4 failed | 45 passed (49)  KILLED (T04, T05, T09, F3)
+M2 capacity uses > instead of >=                       -> 3 failed | 46 passed (49)  KILLED (F1 exact capacity, F2 combined, UI F1/F2)
+M3 equipment uses some() instead of every()            -> 6+ failed                  KILLED (F1, F2, UI F1/F2/F4/F5)
+M4 max duration uses >= 120 instead of > 120           -> 1 failed | 48 passed (49)  KILLED (exactly 120 accepted)
+M5 deepFreeze replaced by shallow freeze               -> 1 failed | 48 passed (49)  KILLED (AC5 deep-frozen)
+M6 room switch resets result instead of re-checking    -> 1 failed | 48 passed (49)  KILLED (UI F5)
+
+Result: 6 / 6 mutants killed. All files restored; `git status` clean apart from the new tests.

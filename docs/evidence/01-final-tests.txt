@@ -1,0 +1,58 @@
+
+ RUN  v2.1.9 C:/Users/tempadmin/Desktop/aibar/swe/practise 9/project
+
+ ✓ tests/filter.test.ts > Catalog > has at least four rooms, each with id, name, capacity, equipment, blocked status and bookings
+ ✓ tests/filter.test.ts > F1 — Capacity filter (capacity >= attendees) > keeps a room whose capacity is exactly the number of attendees
+ ✓ tests/filter.test.ts > F1 — Capacity filter (capacity >= attendees) > drops a room whose capacity is one less than the attendees
+ ✓ tests/filter.test.ts > F1 — Capacity filter (capacity >= attendees) > applies no capacity limit when attendees is empty
+ ✓ tests/filter.test.ts > F1 — Capacity filter (capacity >= attendees) > rejects zero, negative and fractional attendee input with a message
+ ✓ tests/filter.test.ts > F2 — Equipment filter (ALL selected items required) > excludes a room that has only part of the selected equipment
+ ✓ tests/filter.test.ts > F2 — Equipment filter (ALL selected items required) > combines capacity and equipment (both must hold)
+ ✓ tests/filter.test.ts > F3 — A blocked room is never reported as available > omits a blocked room from available rooms even when it matches every filter
+ ✓ tests/filter.test.ts > F4 — Empty result when nothing matches > returns an empty list when no room satisfies the requirements
+ ✓ tests/filter.test.ts > F5 — Availability uses the chosen room bookings > gives different results for room A and room B for the same interval
+ ✓ tests/filter.test.ts > AC5 — Filtering does not modify the catalog > leaves rooms deep-equal and in the same order after filtering
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T01: rejects a fully-contained overlap
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T02: rejects a partial overlap on the leading edge
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T03: rejects a partial overlap on the trailing edge
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T04: allows a booking that ends exactly when the existing one starts (touching)
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T05: allows a booking that starts exactly when the existing one ends (touching)
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T06: allows a booking entirely before the existing one
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T07: allows a booking entirely after the existing one
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > intervalsOverlap (pure boundary helper) > T08: rejects an identical-time overlap (duplicate constraint)
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > checkAvailability boundary reflection > T09: marks a touching booking as Available
+ ✓ tests/regression.test.ts > AC4 — Overlap rules (touching intervals allowed) > checkAvailability boundary reflection > T10: marks an overlapping booking as Unavailable and names the clash
+ ✓ tests/regression.test.ts > AC3 / AC6 — Blocked room and clear status feedback > T11: returns a clear Available status with the room name and interval
+ ✓ tests/regression.test.ts > AC3 / AC6 — Blocked room and clear status feedback > T12: returns a clear Booked (unavailable) status when the room is blocked
+ ✓ tests/regression.test.ts > AC3 / AC6 — Blocked room and clear status feedback > T13: returns a clear Booked (unavailable) status when overlapping a real booking
+ ✓ tests/regression.test.ts > AC3 / AC6 — Blocked room and clear status feedback > reflects Available for the sample Library Study Room A on a free slot
+ ✓ tests/regression.test.ts > AC3 / AC6 — Blocked room and clear status feedback > reflects Unavailable for the blocked Design Studio 2 regardless of time
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > T14: rejects when start equals end (zero-length interval)
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects when start is after end (inverted range)
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects an end time beyond 24:00 (MINUTES_PER_DAY boundary)
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects a start time before 00:00 (negative boundary)
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects when start is not strictly after the current time
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects when the candidate starts in the past (before current time)
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects a duration exceeding the 120-minute limit
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > accepts a duration exactly equal to the 120-minute limit
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects when the room id does not exist (missing field / bad reference)
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects a duplicate booking that exactly matches an existing one
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects a booking that fully envelops an existing one
+ ✓ tests/regression.test.ts > AC1 / AC2 — Valid time and 120-minute maximum (edge cases) > rejects a booking fully contained inside an existing one
+ ✓ tests/regression.test.ts > time conversion utilities > converts minutes to HH:MM labels correctly
+ ✓ tests/regression.test.ts > time conversion utilities > converts valid HH:MM labels to minutes
+ ✓ tests/regression.test.ts > time conversion utilities > rejects malformed or out-of-range time labels
+ ✓ tests/regression.test.ts > AC5 — Immutable booking data > leaves the shared ROOMS catalog deep-equal after many checks
+ ✓ tests/regression.test.ts > AC1 — Empty or malformed time input is rejected by the domain > rejects an empty start time (null) with a clear message
+ ✓ tests/regression.test.ts > AC1 — Empty or malformed time input is rejected by the domain > rejects an empty end time (null)
+ ✓ tests/regression.test.ts > AC5 — Room data is deep-frozen > throws when code tries to push into a room booking list (nested freeze, not shallow)
+ ✓ tests/app.ui.test.tsx > UI integration (React + jsdom) > shows all rooms, then updates the DOM list when filters change (F1, F2)
+ ✓ tests/app.ui.test.tsx > UI integration (React + jsdom) > shows a clear empty state and can clear the filters (F4)
+ ✓ tests/app.ui.test.tsx > UI integration (React + jsdom) > re-checks the selected room when the user switches rooms (F5, F3)
+ ✓ tests/app.ui.test.tsx > UI integration (React + jsdom) > shows an inline message for invalid attendee input
+
+ Test Files  3 passed (3)
+      Tests  49 passed (49)
+   Start at  15:44:31
+   Duration  3.60s (transform 352ms, setup 0ms, collect 1.06s, tests 535ms, environment 1.10s, prepare 2.19s)
+
