@@ -6,7 +6,13 @@ import {
   Room,
 } from '@/domain/types';
 import { checkAvailability } from '@/domain/availability';
-import { MAX_BOOKING_MINUTES, labelToMinutes, minutesToLabel } from '@/domain/time';
+import {
+  MAX_BOOKING_MINUTES,
+  durationOf,
+  exceedsMaxDuration,
+  labelToMinutes,
+  minutesToLabel,
+} from '@/domain/time';
 import { RoomSelector } from '@/components/RoomSelector';
 import { Timeline } from '@/components/Timeline';
 import { ResultPanel } from '@/components/ResultPanel';
@@ -30,13 +36,6 @@ export default function App() {
   const endMin = labelToMinutes(endTime);
 
   const handleCheck = () => {
-    if (startMin === null || endMin === null) {
-      setResult({
-        decision: 'unavailable',
-        reason: 'Please enter valid times in HH:MM format.',
-      });
-      return;
-    }
     setResult(
       checkAvailability(rooms, {
         roomId: selectedId,
@@ -53,12 +52,8 @@ export default function App() {
     setResult(null);
   };
 
-  const duration =
-    startMin !== null && endMin !== null && endMin > startMin
-      ? endMin - startMin
-      : null;
-
-  const durationOver = duration !== null && duration > MAX_BOOKING_MINUTES;
+  const duration = durationOf(startMin, endMin);
+  const durationOver = exceedsMaxDuration(duration);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-800">

@@ -312,3 +312,17 @@ describe('AC5 — Immutable booking data', () => {
     expect(ROOMS).toEqual(before);
   });
 });
+
+describe('AC1 — Empty or malformed time input is rejected by the domain', () => {
+  it('rejects an empty start time (null) with a clear message', () => {
+    const { rooms, params: p } = params({ start: null });
+    const res = checkAvailability(rooms, p);
+    expect(res.decision).toBe('unavailable');
+    expect(res.reason).toBe('Please enter valid times in HH:MM format.');
+  });
+
+  it('rejects an empty end time (null)', () => {
+    const { rooms, params: p } = params({ end: null });
+    expect(checkAvailability(rooms, p).decision).toBe('unavailable');
+  });
+});

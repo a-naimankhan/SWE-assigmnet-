@@ -1,5 +1,5 @@
 import type { Booking, CheckResult, Room } from './types';
-import { MAX_BOOKING_MINUTES, MINUTES_PER_DAY, minutesToLabel } from './time';
+import { minutesToLabel, validateInterval } from './time';
 
 export function intervalsOverlap(a: Booking, start: number, end: number): boolean {
   // Touching endpoints are allowed: [540,600] and [600,660] do NOT overlap.
@@ -8,8 +8,8 @@ export function intervalsOverlap(a: Booking, start: number, end: number): boolea
 
 export interface CheckParams {
   roomId: string;
-  start: number;
-  end: number;
+  start: number | null; // null = empty or malformed time input
+  end: number | null;
   currentTime: number; // minutes from 00:00 today
 }
 
@@ -17,41 +17,19 @@ export function checkAvailability(
   rooms: Room[],
   params: CheckParams
 ): CheckResult {
-  const { roomId, start, end, currentTime } = params;
+  const { roomId, currentTime } = params;
   const room = rooms.find((r) => r.id === roomId);
 
   if (!room) {
     return { decision: 'unavailable', reason: 'Please select a room.' };
   }
 
-  if (start >= end) {
-    return {
-      decision: 'unavailable',
-      reason: 'The start time must be earlier than the end time.',
-    };
+  // AC1 + AC2: one shared validation rule
+  const interval = validateInterval(params.start, params.end, currentTime);
+  if (!interval.ok) {
+    return { decision: 'unavailable', reason: interval.reason };
   }
-
-  if (start < 0 || end > MINUTES_PER_DAY) {
-    return {
-      decision: 'unavailable',
-      reason: 'Times must be between 00:00 and 24:00.',
-    };
-  }
-
-  if (start <= currentTime) {
-    return {
-      decision: 'unavailable',
-      reason: 'The start time must be after the current time.',
-    };
-  }
-
-  // AC2: max duration
-  if (end - start > MAX_BOOKING_MINUTES) {
-    return {
-      decision: 'unavailable',
-      reason: `Bookings may not exceed ${MAX_BOOKING_MINUTES} minutes. This request is ${end - start} minutes.`,
-    };
-  }
+  const { start, end } = interval;
 
   // AC3: blocked room
   if (room.blocked) {
