@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CalendarClock, Clock, Search } from 'lucide-react';
 import { ROOMS } from '@/lib/data';
 import {
@@ -15,33 +15,12 @@ import { RoomSelector } from '@/components/RoomSelector';
 import { Timeline } from '@/components/Timeline';
 import { ResultPanel } from '@/components/ResultPanel';
 import { TimeField } from '@/components/TimeField';
-
-function nowMinutes(): number {
-  const d = new Date();
-  return d.getHours() * 60 + d.getMinutes();
-}
-
-function nowClockLabel(): string {
-  const d = new Date();
-  const hh = d.getHours().toString().padStart(2, '0');
-  const mm = d.getMinutes().toString().padStart(2, '0');
-  const ss = d.getSeconds().toString().padStart(2, '0');
-  return `${hh}:${mm}:${ss}`;
-}
+import { FIXED_NOW } from '@/lib/clock';
 
 export default function App() {
   const [rooms] = useState<Room[]>(ROOMS);
   const [selectedId, setSelectedId] = useState<string>(ROOMS[0].id);
-  const [currentTime, setCurrentTime] = useState<number>(nowMinutes());
-  const [clockLabel, setClockLabel] = useState<string>(nowClockLabel());
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCurrentTime(nowMinutes());
-      setClockLabel(nowClockLabel());
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
+  const currentTime = FIXED_NOW;
   const [startTime, setStartTime] = useState<string>('09:00');
   const [endTime, setEndTime] = useState<string>('10:00');
   const [result, setResult] = useState<CheckResult | null>(null);
@@ -151,7 +130,7 @@ export default function App() {
               </label>
               <div className="flex h-[42px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500">
                 <Clock className="mr-1.5 h-4 w-4" />
-                {clockLabel}
+                {minutesToLabel(currentTime)} (fixed)
               </div>
             </div>
           </div>
