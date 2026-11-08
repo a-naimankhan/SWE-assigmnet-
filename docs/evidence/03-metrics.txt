@@ -1,0 +1,68 @@
+$ git grep -nE "=== null \|\| endMin|endMin > startMin|> MAX_BOOKING_MINUTES|candidateStart >= 0|padStart|minutesToTimeInput|uppercase tracking-wide" v0-baseline -- src ":!*.test.ts"
+v0-baseline:src/App.tsx:26:  const hh = d.getHours().toString().padStart(2, '0');
+v0-baseline:src/App.tsx:27:  const mm = d.getMinutes().toString().padStart(2, '0');
+v0-baseline:src/App.tsx:28:  const ss = d.getSeconds().toString().padStart(2, '0');
+v0-baseline:src/App.tsx:58:    if (startMin === null || endMin === null) {
+v0-baseline:src/App.tsx:82:    startMin !== null && endMin !== null && endMin > startMin
+v0-baseline:src/App.tsx:86:  const durationOver = duration !== null && duration > MAX_BOOKING_MINUTES;
+v0-baseline:src/App.tsx:110:          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+v0-baseline:src/App.tsx:128:          <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+v0-baseline:src/App.tsx:207:          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+v0-baseline:src/components/TimeField.tsx:21:export function minutesToTimeInput(min: number): string {
+v0-baseline:src/components/Timeline.tsx:66:          candidateStart >= 0 && candidateEnd <= MINUTES_PER_DAY && candidateStart < candidateEnd && (
+v0-baseline:src/lib/availability.ts:9:  const hh = h.toString().padStart(2, '0');
+v0-baseline:src/lib/availability.ts:10:  const mm = m.toString().padStart(2, '0');
+v0-baseline:src/lib/availability.ts:70:  if (end - start > MAX_BOOKING_MINUTES) {
+
+$ git grep -nE "<same pattern>" HEAD -- src
+HEAD:src/components/SectionHeading.tsx:11:      className={`${className} flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500`}
+HEAD:src/domain/time.ts:9:  const hh = h.toString().padStart(2, '0');
+HEAD:src/domain/time.ts:10:  const mm = m.toString().padStart(2, '0');
+HEAD:src/domain/time.ts:46:  return duration !== null && duration > MAX_BOOKING_MINUTES;
+
+$ git diff --stat v0-baseline..HEAD -- src tests
+ src/App.tsx                                        | 176 +++++++++++----------
+ src/components/ResultPanel.tsx                     |   2 +-
+ src/components/RoomFilters.tsx                     |  92 +++++++++++
+ src/components/RoomSelector.tsx                    | 143 +++++++++++------
+ src/components/SectionHeading.tsx                  |  19 +++
+ src/components/TimeField.tsx                       |   6 -
+ src/components/Timeline.tsx                        |   8 +-
+ src/data/rooms.ts                                  |  68 ++++++++
+ src/domain/availability.ts                         |  55 +++++++
+ src/domain/clock.ts                                |   6 +
+ src/domain/filter.ts                               |  75 +++++++++
+ src/domain/immutable.ts                            |  15 ++
+ src/domain/time.ts                                 |  79 +++++++++
+ src/domain/types.ts                                |  27 ++++
+ src/lib/availability.ts                            |  98 ------------
+ src/lib/data.ts                                    |  37 -----
+ src/lib/types.ts                                   |  21 ---
+ tests/app.ui.test.tsx                              |  62 ++++++++
+ tests/filter.test.ts                               | 140 ++++++++++++++++
+ .../regression.test.ts                             |  68 ++++++--
+ 20 files changed, 879 insertions(+), 318 deletions(-)
+
+$ wc -l (baseline App.tsx vs final App.tsx)
+222
+224
+
+$ npx eslint . (final)
+0 problems
+
+$ npx tsc --noEmit -p tsconfig.app.json (final)
+0 errors
+
+$ git log --oneline v0-baseline..HEAD
+a429ad9 test: F1-F5 filter tests, jsdom UI integration test, and test evidence
+20da6de feat: filter UI, empty state and result refresh on room switch (F1-F5)
+d9a84f4 feat: capacity and equipment filtering rules in domain/filter (F1-F3)
+794d0c6 feat: room catalog of 5 fictional rooms with equipment lists
+686a408 refactor: extract SectionHeading and remove duplicate time helper from TimeField
+23276ce refactor: deep-freeze room data and make domain types readonly (AC5)
+0d086a3 refactor: one validateInterval/durationOf rule in domain/time, used by domain and UI
+6ffe4be refactor: split code into data/, domain/ (time, availability) and tests/
+4ab296d test: align regression test groups with AC1-AC6 and add AC5 immutability check
+0e3c3fe fix: use a fixed current time (08:00) instead of the live clock
+2727dc9 chore: remove unused @supabase/supabase-js (no database allowed)
+377114b docs: start AI-use log and record baseline test run
