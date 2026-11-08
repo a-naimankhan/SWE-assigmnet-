@@ -20,7 +20,7 @@ import { TimeField } from '@/components/TimeField';
 import { FIXED_NOW } from '@/domain/clock';
 
 export default function App() {
-  const [rooms] = useState<Room[]>(ROOMS);
+  const [rooms] = useState<readonly Room[]>(ROOMS);
   const [selectedId, setSelectedId] = useState<string>(ROOMS[0].id);
   const currentTime = FIXED_NOW;
   const [startTime, setStartTime] = useState<string>('09:00');

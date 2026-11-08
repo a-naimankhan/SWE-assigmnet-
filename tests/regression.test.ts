@@ -326,3 +326,13 @@ describe('AC1 — Empty or malformed time input is rejected by the domain', () =
     expect(checkAvailability(rooms, p).decision).toBe('unavailable');
   });
 });
+
+describe('AC5 — Room data is deep-frozen', () => {
+  it('throws when code tries to push into a room booking list (nested freeze, not shallow)', () => {
+    const bookings = ROOMS[0].bookings as Booking[];
+    expect(Object.isFrozen(ROOMS)).toBe(true);
+    expect(Object.isFrozen(bookings)).toBe(true);
+    expect(() => bookings.push({ ...bookings[0], id: 'hack' })).toThrow(TypeError);
+    expect(ROOMS[0].bookings).toHaveLength(bookings.length);
+  });
+});

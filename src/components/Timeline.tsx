@@ -2,7 +2,7 @@ import { Booking } from '@/domain/types';
 import { MINUTES_PER_DAY, isWellFormedInterval, minutesToLabel } from '@/domain/time';
 
 interface Props {
-  bookings: Booking[];
+  bookings: readonly Booking[];
   blocked: boolean;
   candidateStart: number | null;
   candidateEnd: number | null;

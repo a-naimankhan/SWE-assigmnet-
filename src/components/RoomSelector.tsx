@@ -2,7 +2,7 @@ import { Room } from '@/domain/types';
 import { Check, Lock, MapPin, Users } from 'lucide-react';
 
 interface Props {
-  rooms: Room[];
+  rooms: readonly Room[];
   selectedId: string | null;
   onSelect: (id: string) => void;
 }

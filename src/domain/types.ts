@@ -1,21 +1,24 @@
+// All domain data is read-only (AC5): availability checks and filters
+// return new values and never modify rooms or bookings.
+
 export interface Booking {
-  id: string;
-  title: string;
-  start: number; // minutes from 00:00
-  end: number; // minutes from 00:00
-  owner: string;
+  readonly id: string;
+  readonly title: string;
+  readonly start: number; // minutes from 00:00
+  readonly end: number; // minutes from 00:00
+  readonly owner: string;
 }
 
 export interface Room {
-  id: string;
-  name: string;
-  building: string;
-  capacity: number;
-  blocked: boolean;
-  bookings: Booking[];
+  readonly id: string;
+  readonly name: string;
+  readonly building: string;
+  readonly capacity: number;
+  readonly blocked: boolean;
+  readonly bookings: readonly Booking[];
 }
 
 export interface CheckResult {
-  decision: 'available' | 'unavailable';
-  reason: string;
+  readonly decision: 'available' | 'unavailable';
+  readonly reason: string;
 }

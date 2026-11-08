@@ -14,7 +14,7 @@ export interface CheckParams {
 }
 
 export function checkAvailability(
-  rooms: Room[],
+  rooms: readonly Room[],
   params: CheckParams
 ): CheckResult {
   const { roomId, currentTime } = params;

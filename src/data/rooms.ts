@@ -1,6 +1,7 @@
-import { Room } from '@/domain/types';
+import { deepFreeze } from '@/domain/immutable';
+import type { Room } from '@/domain/types';
 
-export const ROOMS: Room[] = [
+export const ROOMS: readonly Room[] = deepFreeze([
   {
     id: 'r1',
     name: 'Library Study Room A',
@@ -34,4 +35,4 @@ export const ROOMS: Room[] = [
       { id: 'b6', title: 'Equipment Maintenance', start: 0, end: 1440, owner: 'Facilities' },
     ],
   },
-];
+]);
