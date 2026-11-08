@@ -50,11 +50,13 @@ tests/
   app.ui.test.tsx          React UI integration test (jsdom)
 docs/
   REPORT.md                analysis, refactoring, diagrams, quality evaluation, reflection
+  HUMAN_REVIEW.md          what the student checked personally after the AI work
   evidence/                real test runs, mutation check, metrics
   screenshots/             demo scenarios
 AI_LOG.md                  AI-use record
 ```
 
 ## Versions
+- Repository: https://github.com/a-naimankhan/SWE-assigmnet- (branch `master`)
 - Initial version: tag `v0-baseline` (commit `9badd8c`)
 - Final version: `master` HEAD. Run `git log --oneline v0-baseline..HEAD` to see one commit per change.
