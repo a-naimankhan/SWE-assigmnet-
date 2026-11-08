@@ -9,11 +9,14 @@ export interface Booking {
   readonly owner: string;
 }
 
+export type Equipment = 'projector' | 'whiteboard' | 'video-conference' | 'computers';
+
 export interface Room {
   readonly id: string;
   readonly name: string;
   readonly building: string;
   readonly capacity: number;
+  readonly equipment: readonly Equipment[];
   readonly blocked: boolean;
   readonly bookings: readonly Booking[];
 }
