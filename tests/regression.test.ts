@@ -1,15 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import {
-  MAX_BOOKING_MINUTES,
-  MINUTES_PER_DAY,
-  checkAvailability,
-  intervalsOverlap,
-  labelToMinutes,
-  minutesToLabel,
-  type CheckParams,
-} from '@/lib/availability';
-import { ROOMS } from '@/lib/data';
-import type { Booking, Room } from '@/lib/types';
+import { checkAvailability, intervalsOverlap, type CheckParams } from '@/domain/availability';
+import { MAX_BOOKING_MINUTES, MINUTES_PER_DAY, labelToMinutes, minutesToLabel } from '@/domain/time';
+import { ROOMS } from '@/data/rooms';
+import type { Booking, Room } from '@/domain/types';
 
 // ---------------------------------------------------------------------------
 // Test helpers / fixtures
@@ -25,6 +18,7 @@ function makeRoom(overrides: Partial<Room> = {}): Room {
     name: 'Test Room',
     building: 'Test Building',
     capacity: 10,
+    equipment: [],
     blocked: false,
     bookings: [],
     ...overrides,
@@ -60,10 +54,10 @@ function params(
 }
 
 // ---------------------------------------------------------------------------
-// AC1 — Overlap & boundary logic
+// AC4 — Overlap rules
 // ---------------------------------------------------------------------------
 
-describe('AC1 — Overlap & boundary logic', () => {
+describe('AC4 — Overlap rules (touching intervals allowed)', () => {
   describe('intervalsOverlap (pure boundary helper)', () => {
     const existing: Booking = { ...BOOKING_10_11 };
 
@@ -121,10 +115,10 @@ describe('AC1 — Overlap & boundary logic', () => {
 });
 
 // ---------------------------------------------------------------------------
-// AC2 — State & status validation (Available / Booked reflections)
+// AC3 / AC6 — Blocked room and status feedback (Available / Booked reflections)
 // ---------------------------------------------------------------------------
 
-describe('AC2 — State & status validation', () => {
+describe('AC3 / AC6 — Blocked room and clear status feedback', () => {
   it('T11: returns a clear Available status with the room name and interval', () => {
     const room = makeRoom({ bookings: [] });
     const { rooms, params: p } = params({ room, start: 540, end: 600 });
@@ -172,10 +166,10 @@ describe('AC2 — State & status validation', () => {
 });
 
 // ---------------------------------------------------------------------------
-// AC3 — Edge cases: invalid ranges, missing fields, duplicate constraints
+// AC1 / AC2 — Time validity and duration limit: invalid ranges, missing fields, duplicate constraints
 // ---------------------------------------------------------------------------
 
-describe('AC3 — Edge cases', () => {
+describe('AC1 / AC2 — Valid time and 120-minute maximum (edge cases)', () => {
   it('T14: rejects when start equals end (zero-length interval)', () => {
     const { rooms, params: p } = params({ start: 600, end: 600 });
     const res = checkAvailability(rooms, p);
@@ -301,5 +295,45 @@ describe('time conversion utilities', () => {
     expect(labelToMinutes('12:60')).toBeNull();
     expect(labelToMinutes('abc')).toBeNull();
     expect(labelToMinutes('')).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AC5 — Booking data is never modified by an availability check
+// ---------------------------------------------------------------------------
+
+describe('AC5 — Immutable booking data', () => {
+  it('leaves the shared ROOMS catalog deep-equal after many checks', () => {
+    const before = structuredClone(ROOMS);
+    for (const room of ROOMS) {
+      checkAvailability(ROOMS, { roomId: room.id, start: 540, end: 600, currentTime: 480 });
+      checkAvailability(ROOMS, { roomId: room.id, start: 500, end: 1300, currentTime: 480 });
+      checkAvailability(ROOMS, { roomId: room.id, start: 900, end: 960, currentTime: 480 });
+    }
+    expect(ROOMS).toEqual(before);
+  });
+});
+
+describe('AC1 — Empty or malformed time input is rejected by the domain', () => {
+  it('rejects an empty start time (null) with a clear message', () => {
+    const { rooms, params: p } = params({ start: null });
+    const res = checkAvailability(rooms, p);
+    expect(res.decision).toBe('unavailable');
+    expect(res.reason).toBe('Please enter valid times in HH:MM format.');
+  });
+
+  it('rejects an empty end time (null)', () => {
+    const { rooms, params: p } = params({ end: null });
+    expect(checkAvailability(rooms, p).decision).toBe('unavailable');
+  });
+});
+
+describe('AC5 — Room data is deep-frozen', () => {
+  it('throws when code tries to push into a room booking list (nested freeze, not shallow)', () => {
+    const bookings = ROOMS[0].bookings as Booking[];
+    expect(Object.isFrozen(ROOMS)).toBe(true);
+    expect(Object.isFrozen(bookings)).toBe(true);
+    expect(() => bookings.push({ ...bookings[0], id: 'hack' })).toThrow(TypeError);
+    expect(ROOMS[0].bookings).toHaveLength(bookings.length);
   });
 });

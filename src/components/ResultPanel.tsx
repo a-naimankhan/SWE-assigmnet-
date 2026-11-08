@@ -1,4 +1,4 @@
-import { CheckResult } from '@/lib/types';
+import { CheckResult } from '@/domain/types';
 import { CheckCircle2, XCircle } from 'lucide-react';
 
 interface Props {

@@ -1,8 +1,8 @@
-import { Booking } from '@/lib/types';
-import { MINUTES_PER_DAY, minutesToLabel } from '@/lib/availability';
+import { Booking } from '@/domain/types';
+import { MINUTES_PER_DAY, isWellFormedInterval, minutesToLabel } from '@/domain/time';
 
 interface Props {
-  bookings: Booking[];
+  bookings: readonly Booking[];
   blocked: boolean;
   candidateStart: number | null;
   candidateEnd: number | null;
@@ -63,7 +63,7 @@ export function Timeline({ bookings, blocked, candidateStart, candidateEnd, curr
 
         {/* candidate interval */}
         {candidateStart !== null && candidateEnd !== null &&
-          candidateStart >= 0 && candidateEnd <= MINUTES_PER_DAY && candidateStart < candidateEnd && (
+          isWellFormedInterval(candidateStart, candidateEnd) && (
             <div
               className="absolute top-0.5 bottom-0.5 rounded border-2 border-teal-500 bg-teal-300/50"
               style={{

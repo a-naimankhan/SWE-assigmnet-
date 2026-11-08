@@ -1,0 +1,39 @@
+
+ RUN  v2.1.9 C:/Users/tempadmin/Desktop/aibar/swe/practise 9/project
+
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T01: rejects a fully-contained overlap
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T02: rejects a partial overlap on the leading edge
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T03: rejects a partial overlap on the trailing edge
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T04: allows a booking that ends exactly when the existing one starts (touching)
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T05: allows a booking that starts exactly when the existing one ends (touching)
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T06: allows a booking entirely before the existing one
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T07: allows a booking entirely after the existing one
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > intervalsOverlap (pure boundary helper) > T08: rejects an identical-time overlap (duplicate constraint)
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > checkAvailability boundary reflection > T09: marks a touching booking as Available
+ ✓ src/lib/roomAvailability.test.ts > AC1 — Overlap & boundary logic > checkAvailability boundary reflection > T10: marks an overlapping booking as Unavailable and names the clash
+ ✓ src/lib/roomAvailability.test.ts > AC2 — State & status validation > T11: returns a clear Available status with the room name and interval
+ ✓ src/lib/roomAvailability.test.ts > AC2 — State & status validation > T12: returns a clear Booked (unavailable) status when the room is blocked
+ ✓ src/lib/roomAvailability.test.ts > AC2 — State & status validation > T13: returns a clear Booked (unavailable) status when overlapping a real booking
+ ✓ src/lib/roomAvailability.test.ts > AC2 — State & status validation > reflects Available for the sample Library Study Room A on a free slot
+ ✓ src/lib/roomAvailability.test.ts > AC2 — State & status validation > reflects Unavailable for the blocked Design Studio 2 regardless of time
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > T14: rejects when start equals end (zero-length interval)
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects when start is after end (inverted range)
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects an end time beyond 24:00 (MINUTES_PER_DAY boundary)
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects a start time before 00:00 (negative boundary)
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects when start is not strictly after the current time
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects when the candidate starts in the past (before current time)
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects a duration exceeding the 120-minute limit
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > accepts a duration exactly equal to the 120-minute limit
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects when the room id does not exist (missing field / bad reference)
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects a duplicate booking that exactly matches an existing one
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects a booking that fully envelops an existing one
+ ✓ src/lib/roomAvailability.test.ts > AC3 — Edge cases > rejects a booking fully contained inside an existing one
+ ✓ src/lib/roomAvailability.test.ts > time conversion utilities > converts minutes to HH:MM labels correctly
+ ✓ src/lib/roomAvailability.test.ts > time conversion utilities > converts valid HH:MM labels to minutes
+ ✓ src/lib/roomAvailability.test.ts > time conversion utilities > rejects malformed or out-of-range time labels
+
+ Test Files  1 passed (1)
+      Tests  30 passed (30)
+   Start at  15:33:01
+   Duration  1.40s (transform 105ms, setup 0ms, collect 120ms, tests 11ms, environment 0ms, prepare 184ms)
+

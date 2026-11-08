@@ -1,89 +1,93 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CalendarClock, Clock, Search } from 'lucide-react';
-import { ROOMS } from '@/lib/data';
-import {
-  CheckResult,
-  Room,
-} from '@/lib/types';
+import { ROOMS } from '@/data/rooms';
+import type { CheckResult, Equipment, Room } from '@/domain/types';
+import { checkAvailability } from '@/domain/availability';
+import { availableRooms, filterRooms, parseAttendees } from '@/domain/filter';
 import {
   MAX_BOOKING_MINUTES,
-  checkAvailability,
+  durationOf,
+  exceedsMaxDuration,
   labelToMinutes,
   minutesToLabel,
-} from '@/lib/availability';
+} from '@/domain/time';
+import { FIXED_NOW } from '@/domain/clock';
+import { RoomFilters } from '@/components/RoomFilters';
 import { RoomSelector } from '@/components/RoomSelector';
 import { Timeline } from '@/components/Timeline';
 import { ResultPanel } from '@/components/ResultPanel';
 import { TimeField } from '@/components/TimeField';
+import { SectionHeading } from '@/components/SectionHeading';
 
-function nowMinutes(): number {
-  const d = new Date();
-  return d.getHours() * 60 + d.getMinutes();
+interface AppProps {
+  /** Injected in tests; defaults to the fictional catalog. */
+  rooms?: readonly Room[];
+  currentTime?: number;
 }
 
-function nowClockLabel(): string {
-  const d = new Date();
-  const hh = d.getHours().toString().padStart(2, '0');
-  const mm = d.getMinutes().toString().padStart(2, '0');
-  const ss = d.getSeconds().toString().padStart(2, '0');
-  return `${hh}:${mm}:${ss}`;
-}
+export default function App({ rooms = ROOMS, currentTime = FIXED_NOW }: AppProps) {
+  // --- requirements (F1, F2) ---
+  const [attendeesInput, setAttendeesInput] = useState<string>('');
+  const [equipment, setEquipment] = useState<readonly Equipment[]>([]);
+  const attendees = parseAttendees(attendeesInput);
+  const attendeesValue = attendees.ok ? attendees.value : null;
+  const criteria = useMemo(
+    () => ({ attendees: attendeesValue, equipment }),
+    [attendeesValue, equipment]
+  );
+  const visibleRooms = useMemo(() => filterRooms(rooms, criteria), [rooms, criteria]);
 
-export default function App() {
-  const [rooms] = useState<Room[]>(ROOMS);
-  const [selectedId, setSelectedId] = useState<string>(ROOMS[0].id);
-  const [currentTime, setCurrentTime] = useState<number>(nowMinutes());
-  const [clockLabel, setClockLabel] = useState<string>(nowClockLabel());
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCurrentTime(nowMinutes());
-      setClockLabel(nowClockLabel());
-    }, 1000);
-    return () => clearInterval(id);
-  }, []);
+  // --- selection & interval ---
+  const [selectedId, setSelectedId] = useState<string | null>(rooms[0]?.id ?? null);
   const [startTime, setStartTime] = useState<string>('09:00');
   const [endTime, setEndTime] = useState<string>('10:00');
-  const [result, setResult] = useState<CheckResult | null>(null);
+  const [checked, setChecked] = useState<boolean>(false);
 
-  const selectedRoom = useMemo(
-    () => rooms.find((r) => r.id === selectedId) ?? null,
-    [rooms, selectedId]
-  );
+  // A room hidden by the filters is no longer selected.
+  const selectedRoom = visibleRooms.find((r) => r.id === selectedId) ?? null;
 
   const startMin = labelToMinutes(startTime);
   const endMin = labelToMinutes(endTime);
 
-  const handleCheck = () => {
-    if (startMin === null || endMin === null) {
-      setResult({
-        decision: 'unavailable',
-        reason: 'Please enter valid times in HH:MM format.',
-      });
-      return;
-    }
-    setResult(
-      checkAvailability(rooms, {
-        roomId: selectedId,
-        start: startMin,
-        end: endMin,
-        currentTime,
-      })
-    );
-  };
+  // F5: the result is derived from the CURRENT room, so switching rooms
+  // after a check re-runs the check against that room's own bookings.
+  const result: CheckResult | null = useMemo(
+    () =>
+      checked && selectedRoom
+        ? checkAvailability(rooms, {
+            roomId: selectedRoom.id,
+            start: startMin,
+            end: endMin,
+            currentTime,
+          })
+        : null,
+    [checked, selectedRoom, rooms, startMin, endMin, currentTime]
+  );
+
+  const duration = durationOf(startMin, endMin);
+  const durationOver = exceedsMaxDuration(duration);
+  const freeCount =
+    duration !== null
+      ? availableRooms(rooms, criteria, startMin, endMin, currentTime).length
+      : null;
+
+  const handleCheck = () => setChecked(true);
 
   const handleReset = () => {
     setStartTime('09:00');
     setEndTime('10:00');
-    setResult(null);
+    setChecked(false);
   };
 
-  const duration =
-    startMin !== null && endMin !== null && endMin > startMin
-      ? endMin - startMin
-      : null;
+  const clearFilters = () => {
+    setAttendeesInput('');
+    setEquipment([]);
+  };
 
-  const durationOver = duration !== null && duration > MAX_BOOKING_MINUTES;
+  const toggleEquipment = (item: Equipment) =>
+    setEquipment((prev) =>
+      prev.includes(item) ? prev.filter((e) => e !== item) : [...prev, item]
+    );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 text-slate-800">
@@ -105,45 +109,48 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-        {/* Step 1: Room */}
+        {/* Step 1: Requirements + room */}
         <section>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-600">
-              1
-            </span>
-            Choose a room
-          </h2>
-          <RoomSelector
-            rooms={rooms}
-            selectedId={selectedId}
-            onSelect={(id) => {
-              setSelectedId(id);
-              setResult(null);
-            }}
+          <SectionHeading step={1} title="Choose a room" />
+          <RoomFilters
+            attendees={attendeesInput}
+            attendeesError={attendees.ok ? null : attendees.reason}
+            equipment={equipment}
+            onAttendeesChange={setAttendeesInput}
+            onToggleEquipment={toggleEquipment}
+            onClear={clearFilters}
           />
+          <RoomSelector
+            rooms={visibleRooms}
+            totalRooms={rooms.length}
+            selectedId={selectedRoom?.id ?? null}
+            onSelect={setSelectedId}
+            onClearFilters={clearFilters}
+          />
+          {freeCount !== null && visibleRooms.length > 0 && (
+            <p className="mt-2 text-xs text-slate-500" data-testid="free-count">
+              {freeCount} of {visibleRooms.length} matching rooms are free{' '}
+              {minutesToLabel(startMin as number)}–{minutesToLabel(endMin as number)}
+            </p>
+          )}
         </section>
 
         {/* Step 2: Time */}
         <section className="rounded-2xl border border-slate-200 bg-white p-5">
-          <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-600">
-              2
-            </span>
-            Enter a candidate interval
-          </h2>
+          <SectionHeading step={2} title="Enter a candidate interval" className="mb-4" />
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-600">
                 Start time
               </label>
-              <TimeField value={startTime} onChange={(v) => { setStartTime(v); setResult(null); }} />
+              <TimeField value={startTime} onChange={(v) => { setStartTime(v); setChecked(false); }} />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-600">
                 End time
               </label>
-              <TimeField value={endTime} onChange={(v) => { setEndTime(v); setResult(null); }} />
+              <TimeField value={endTime} onChange={(v) => { setEndTime(v); setChecked(false); }} />
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-slate-600">
@@ -151,7 +158,7 @@ export default function App() {
               </label>
               <div className="flex h-[42px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500">
                 <Clock className="mr-1.5 h-4 w-4" />
-                {clockLabel}
+                {minutesToLabel(currentTime)} (fixed)
               </div>
             </div>
           </div>
@@ -204,12 +211,7 @@ export default function App() {
 
         {/* Result */}
         <section>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-600">
-              3
-            </span>
-            Result
-          </h2>
+          <SectionHeading step={3} title="Result" />
           <ResultPanel result={result} />
         </section>
 
