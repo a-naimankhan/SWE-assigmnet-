@@ -17,6 +17,7 @@ import { RoomSelector } from '@/components/RoomSelector';
 import { Timeline } from '@/components/Timeline';
 import { ResultPanel } from '@/components/ResultPanel';
 import { TimeField } from '@/components/TimeField';
+import { SectionHeading } from '@/components/SectionHeading';
 import { FIXED_NOW } from '@/domain/clock';
 
 export default function App() {
@@ -77,12 +78,7 @@ export default function App() {
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-6">
         {/* Step 1: Room */}
         <section>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-600">
-              1
-            </span>
-            Choose a room
-          </h2>
+          <SectionHeading step={1} title="Choose a room" />
           <RoomSelector
             rooms={rooms}
             selectedId={selectedId}
@@ -95,12 +91,7 @@ export default function App() {
 
         {/* Step 2: Time */}
         <section className="rounded-2xl border border-slate-200 bg-white p-5">
-          <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-600">
-              2
-            </span>
-            Enter a candidate interval
-          </h2>
+          <SectionHeading step={2} title="Enter a candidate interval" className="mb-4" />
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
@@ -174,12 +165,7 @@ export default function App() {
 
         {/* Result */}
         <section>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200 text-[11px] font-bold text-slate-600">
-              3
-            </span>
-            Result
-          </h2>
+          <SectionHeading step={3} title="Result" />
           <ResultPanel result={result} />
         </section>
 
