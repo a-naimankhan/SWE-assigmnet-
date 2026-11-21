@@ -22,6 +22,7 @@ import {
   createAnthropicProvider,
   handleExplain,
   mockProvider,
+  type ServerProvider,
 } from '@/ai/serverHandler';
 import { checkAvailability } from '@/domain/availability';
 import { ROOMS } from '@/data/rooms';
@@ -229,7 +230,7 @@ describe('http adapter and server handler', () => {
   it('server returns a validated explanation from the mock provider', async () => {
     const res = await handleExplain(JSON.stringify(overlap), mockProvider);
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({ explanation: mockExplanation(overlap) });
+    expect(res.body).toEqual({ explanation: mockExplanation(overlap), provider: 'mock' });
   });
 
   it.each([
@@ -242,15 +243,16 @@ describe('http adapter and server handler', () => {
 
   it('server rejects bad model output and provider failures with 502', async () => {
     const body = JSON.stringify(overlap);
-    expect((await handleExplain(body, async () => 'not json')).status).toBe(502);
-    expect((await handleExplain(body, async () => JSON.stringify({ explanation: 'The room is available.' }))).status).toBe(502);
-    expect((await handleExplain(body, async () => { throw new Error('boom'); })).status).toBe(502);
+    const live = (complete: ServerProvider['complete']): ServerProvider => ({ kind: 'live', complete });
+    expect((await handleExplain(body, live(async () => 'not json'))).status).toBe(502);
+    expect((await handleExplain(body, live(async () => JSON.stringify({ explanation: 'The room is available.' })))).status).toBe(502);
+    expect((await handleExplain(body, live(async () => { throw new Error('boom'); }))).status).toBe(502);
   });
 
   it('server aborts a hanging provider after its timeout', async () => {
     const hang = (_i: ExplainInput, signal: AbortSignal) =>
       new Promise<string>((_, rej) => signal.addEventListener('abort', () => rej(new Error('abort'))));
-    const res = await handleExplain(JSON.stringify(overlap), hang, 20);
+    const res = await handleExplain(JSON.stringify(overlap), { kind: 'live', complete: hang }, 20);
     expect(res.status).toBe(502);
   });
 
@@ -260,7 +262,9 @@ describe('http adapter and server handler', () => {
       seen = { headers: init.headers as Record<string, string>, body: JSON.parse(String(init.body)) };
       return new Response(JSON.stringify({ content: [{ type: 'text', text: '{"explanation":"x"}' }] }), { status: 200 });
     }) as unknown as typeof fetch;
-    const text = await createAnthropicProvider('sk-test', { fetchImpl: fakeFetch })(overlap, new AbortController().signal);
+    const provider = createAnthropicProvider('sk-test', { fetchImpl: fakeFetch });
+    expect(provider.kind).toBe('live');
+    const text = await provider.complete(overlap, new AbortController().signal);
     expect(text).toBe('{"explanation":"x"}');
     expect(seen!.headers['x-api-key']).toBe('sk-test');
     expect(JSON.stringify(seen!.body)).not.toContain('sk-test');

@@ -15,6 +15,7 @@ export const MAX_ROOM_LABEL = 80;
 export const MAX_EXPLANATION_CHARS = 300;
 export const MAX_SENTENCES = 2;
 export const DEFAULT_TIMEOUT_MS = 3000;
+export const MOCK_LABEL = 'Mock explanation (demo mode, no AI model used)';
 
 export const REASON_CODES: readonly ReasonCode[] = [
   'AVAILABLE',
@@ -48,8 +49,11 @@ export interface ExplainAdapter {
   explain(input: ExplainInput, signal: AbortSignal): Promise<unknown>;
 }
 
+/** Who produced the text. Anything not proven to be a live model counts as mock. */
+export type ExplainProvider = 'mock' | 'live';
+
 export type ExplainOutcome =
-  | { kind: 'generated'; explanation: string }
+  | { kind: 'generated'; explanation: string; provider: ExplainProvider }
   | { kind: 'fallback'; explanation: string; cause: 'timeout' | 'error' | 'invalid-output' }
   | { kind: 'rejected'; message: string };
 
@@ -124,11 +128,46 @@ export function validateExplainInput(raw: unknown): Validation<ExplainInput> {
   };
 }
 
-// Wording that would contradict the checker's decision (AC2).
+// Wording that would contradict the checker's decision (AC2). This is a
+// heuristic guard, not proof: the real guarantee is that the status shown to
+// the user always comes from the checker, never from this text.
 const CLAIMS_FREE =
-  /\b(is free|is available|are available|you can book|can be booked|works for you|this time works)\b/i;
+  /\b(?:free|vacant|open|empty|available|go ahead|works for you|this time works|you can (?:book|reserve|use)|can be booked)\b/gi;
 const CLAIMS_NOT_FREE =
-  /\b(unavailable|not available|isn't available|not free|already booked|can't be booked|cannot be booked|blocked|overlap\w*|clash\w*)\b/i;
+  /\b(?:unavailable|booked|occupied|taken|reserved|busy|held|closed|blocked|conflicts?|overlap\w*|clash\w*)\b/gi;
+const NEGATION = /\b(?:no|not|without|never|nothing|nor|none)\b|n't\b/i;
+const TITLES = /^(?:dr|prof|professor|mr|mrs|ms|miss|mx)\.?$/i;
+
+/** True when `pattern` matches a claim that is not negated within the 4 preceding words. */
+function hasPositiveClaim(text: string, pattern: RegExp): boolean {
+  for (const m of text.matchAll(pattern)) {
+    const before = text.slice(0, m.index).split(/\s+/).slice(-4).join(' ');
+    if (!NEGATION.test(before)) return true;
+  }
+  return false;
+}
+
+/** Names, titles, extra rooms or numbers that are not in the supplied facts. */
+function inventedEntity(text: string, input: ExplainInput): string | null {
+  const known = new Set(input.roomLabel.toLowerCase().split(/\s+/));
+
+  const withoutKnownNumbers = text.replace(/\b\d{1,2}:\d{2}\b/g, ' ').replace(/\b120\b/g, ' ');
+  for (const n of withoutKnownNumbers.match(/\d+/g) ?? []) {
+    if (!known.has(n)) return `the number ${n}`;
+  }
+
+  const tokens = text.split(/\s+/);
+  for (let i = 0; i < tokens.length; i++) {
+    const w = tokens[i].replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}:]+$/gu, '');
+    if (!w) continue;
+    if (TITLES.test(w)) return `the title ${w}`;
+    if (!/^\p{Lu}/u.test(w) || w === 'HH:MM' || w === 'I') continue;
+    if (known.has(w.toLowerCase())) continue;
+    const startsSentence = i === 0 || /[.!?:]$/.test(tokens[i - 1]);
+    if (!startsSentence) return `the name ${w}`;
+  }
+  return null;
+}
 
 /** AC2: output must be plain, short, agree with the status and add no facts. */
 export function validateExplainOutput(raw: unknown, input: ExplainInput): Validation<string> {
@@ -158,12 +197,14 @@ export function validateExplainOutput(raw: unknown, input: ExplainInput): Valida
   for (const t of explanation.match(/\b\d{1,2}:\d{2}\b/g) ?? []) {
     if (!allowed.has(t)) return { ok: false, reason: `explanation mentions an unknown time (${t}).` };
   }
+  const invented = inventedEntity(explanation, input);
+  if (invented) return { ok: false, reason: `explanation mentions ${invented}, which was not supplied.` };
 
   // Must not override the deterministic status.
-  if (input.isAvailable && CLAIMS_NOT_FREE.test(explanation)) {
+  if (input.isAvailable && hasPositiveClaim(explanation, CLAIMS_NOT_FREE)) {
     return { ok: false, reason: 'explanation contradicts an available result.' };
   }
-  if (!input.isAvailable && CLAIMS_FREE.test(explanation)) {
+  if (!input.isAvailable && hasPositiveClaim(explanation, CLAIMS_FREE)) {
     return { ok: false, reason: 'explanation contradicts an unavailable result.' };
   }
   return { ok: true, value: explanation };
@@ -220,7 +261,10 @@ export async function explainAvailability(
     if (!output.ok) {
       return { kind: 'fallback', explanation: fallbackExplanation(input), cause: 'invalid-output' };
     }
-    return { kind: 'generated', explanation: output.value };
+    // Fail-safe: only a live model, as reported by the server, may be called AI-generated.
+    const reported = (raw as Record<string, unknown>).provider;
+    const provider: ExplainProvider = reported === 'live' && !adapter.isMock ? 'live' : 'mock';
+    return { kind: 'generated', explanation: output.value, provider };
   } catch {
     return { kind: 'fallback', explanation: fallbackExplanation(input), cause: 'error' };
   } finally {

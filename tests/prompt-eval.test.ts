@@ -46,8 +46,8 @@ describe('prompt comparison (Task #04)', () => {
     expect(score('p2').unsupported).toBe(0);
   });
 
-  it('validator verdicts on free text: p1 3/4 (one false positive on "overlaps"), p2 4/4', () => {
-    expect(score('p1').validator).toBe(3);
+  it('validator accepts all honest free-text samples (the "no ... overlaps" false positive is fixed)', () => {
+    expect(score('p1').validator).toBe(4);
     expect(score('p2').validator).toBe(4);
   });
 

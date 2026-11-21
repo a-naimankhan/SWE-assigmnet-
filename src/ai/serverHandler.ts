@@ -13,18 +13,24 @@ import { ACTIVE_PROMPT, PROMPTS, buildUserMessage } from './prompts';
 
 export const MAX_BODY_BYTES = 2048;
 
-/** Returns the model's raw text for an already-validated input. */
-export type ServerProvider = (input: ExplainInput, signal: AbortSignal) => Promise<string>;
+/** `complete` returns the model's raw text for an already-validated input. */
+export interface ServerProvider {
+  /** Reported to the client so a mock is never presented as a live model. */
+  readonly kind: 'mock' | 'live';
+  complete(input: ExplainInput, signal: AbortSignal): Promise<string>;
+}
 
-export const mockProvider: ServerProvider = async (input) =>
-  JSON.stringify({ explanation: mockExplanation(input) });
+export const mockProvider: ServerProvider = {
+  kind: 'mock',
+  complete: async (input) => JSON.stringify({ explanation: mockExplanation(input) }),
+};
 
 export function createAnthropicProvider(
   apiKey: string,
   opts: { model?: string; fetchImpl?: typeof fetch } = {}
 ): ServerProvider {
   const fetchImpl = opts.fetchImpl ?? ((...a) => fetch(...a));
-  return async (input, signal) => {
+  const complete: ServerProvider['complete'] = async (input, signal) => {
     const res = await fetchImpl('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       signal,
@@ -44,11 +50,12 @@ export function createAnthropicProvider(
     const data = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
     return data.content?.find((c) => c.type === 'text')?.text ?? '';
   };
+  return { kind: 'live', complete };
 }
 
 export interface HandlerResult {
   status: number;
-  body: { explanation: string } | { error: string };
+  body: { explanation: string; provider: 'mock' | 'live' } | { error: string };
 }
 
 export async function handleExplain(
@@ -70,7 +77,7 @@ export async function handleExplain(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const text = await provider(input.value, controller.signal);
+    const text = await provider.complete(input.value, controller.signal);
     let model: unknown;
     try {
       model = JSON.parse(text);
@@ -79,7 +86,7 @@ export async function handleExplain(
     }
     const output = validateExplainOutput(model, input.value);
     if (!output.ok) return { status: 502, body: { error: 'Model output rejected.' } };
-    return { status: 200, body: { explanation: output.value } };
+    return { status: 200, body: { explanation: output.value, provider: provider.kind } };
   } catch {
     return { status: 502, body: { error: 'Provider unavailable.' } };
   } finally {

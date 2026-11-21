@@ -49,3 +49,24 @@ Each entry: date · tool · prompt summary · output used · problems found · c
 - Keep blocked rooms visible in the filtered list (with a *Blocked* badge) instead of hiding them: the user should see *why* a room they expect is not available, and F3 only forbids reporting it as available.
 - Keep the original 30 tests instead of rewriting them.
 - No new `SKILL.md` (the brief forbids it).
+
+---
+
+# AI-use record (Practice #11 – Explain availability)
+
+**Assistant:** Claude (Claude Code session, Sonnet 5.5), working in a cloud checkout of this repo on branch `feat/week-11-tasks`. I gave the task PDF and the rules (work on a branch, mock first, tell me what is done); the assistant wrote code, tests and the report, and I reviewed the results.
+
+## 12. 2026-11-21 · baseline and feature implementation
+- **Prompt summary:** read the Practice #11 PDF, plan it, then implement tasks 01–05 with a mock LLM adapter.
+- **Output used:** `src/ai/*`, `ExplainPanel`, additive `reasonCode` in `CheckResult`, tests, screenshots.
+- **Problems found:** (1) timeout race – `abort()` before `resolve()` reported cause "error"; (2) the validator rejected its own mock templates ("00:00", example "09:00") and let `**bold**` through; (3) one UI-test typo. All caught by the new tests.
+- **Verified:** `npm test` 49/49 before, 132/132 after this stage; typecheck, lint, build clean; real Chrome screenshots.
+
+## 13. 2026-11-21 · agentic code review (separate read-only agent)
+- **Prompt summary:** review `e833209..HEAD` against AC1–AC5, with README and AGENTS.md; evidence, severity, repro, minimal fix for each finding; no repository changes.
+- **Output used:** 7 findings; all treated as hypotheses and reproduced with failing tests first.
+- **Rejected / not acted on:** finding 5 (live provider fenced JSON) – plausible, not reproducible without an API key; findings 3, 6 and test gaps left as unresolved, listed in `docs/PRACTICE-11.md`.
+- **Fixes applied:** A (output guard) and B (provider label). 149/149 tests afterwards.
+
+## 14. Limits of the AI evidence
+The three prompt samples in `docs/evidence/practice11/prompt-samples.json` were written by the assistant, not produced by a live API run.

@@ -34,16 +34,16 @@ describe('Explain availability UI (AC1-AC5)', () => {
     expect(screen.queryByRole('button', { name: /Explain availability/ })).toBeNull();
   });
 
-  const cases: Array<[string, () => void, RegExp, string]> = [
-    ['overlap', () => {}, /^Unavailable/, 'OVERLAP'],
-    ['available', () => fireEvent.click(screen.getByRole('button', { name: /Engineering Lab 3/ })), /^Available/, 'AVAILABLE'],
-    ['blocked room', () => fireEvent.click(screen.getByRole('button', { name: /Design Studio 2/ })), /^Unavailable/, 'ROOM_BLOCKED'],
-    ['past time', () => setTimes('07:00', '08:30'), /^Unavailable/, 'START_IN_PAST'],
-    ['invalid time', () => setTimes('', '10:00'), /^Unavailable/, 'INVALID_TIME_FORMAT'],
-    ['too long', () => setTimes('09:00', '12:00'), /^Unavailable/, 'EXCEEDS_MAX_DURATION'],
+  const cases: Array<[string, () => void, RegExp, RegExp]> = [
+    ['overlap', () => {}, /^Unavailable/, /not free/],
+    ['available', () => fireEvent.click(screen.getByRole('button', { name: /Engineering Lab 3/ })), /^Available/, /is free/],
+    ['blocked room', () => fireEvent.click(screen.getByRole('button', { name: /Design Studio 2/ })), /^Unavailable/, /closed for booking/],
+    ['past time', () => setTimes('07:00', '08:30'), /^Unavailable/, /already passed/],
+    ['invalid time', () => setTimes('', '10:00'), /^Unavailable/, /HH:MM format/],
+    ['too long', () => setTimes('09:00', '12:00'), /^Unavailable/, /120-minute limit/],
   ];
 
-  it.each(cases)('%s: explanation shown, decision unchanged, labelled as mock and not a booking', async (_n, arrange, status, code) => {
+  it.each(cases)('%s: explanation shown, decision unchanged, labelled as mock and not a booking', async (_n, arrange, status, expected) => {
     setup();
     arrange();
     check();
@@ -56,7 +56,7 @@ describe('Explain availability UI (AC1-AC5)', () => {
     expect(box.textContent).toContain('Mock explanation');
     expect(box.textContent).toMatch(/not a booking confirmation/i);
     expect(box.textContent?.length).toBeGreaterThan(20);
-    expect(code).toBeTruthy();
+    expect(box.textContent).toMatch(expected); // right wording for this reason code
   });
 
   it('shows the exact mock sentence for the overlap case', async () => {

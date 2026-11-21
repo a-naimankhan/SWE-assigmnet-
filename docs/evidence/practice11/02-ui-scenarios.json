@@ -1,0 +1,79 @@
+[
+  {
+    "shot": "e01-available-mock",
+    "decision_before": "Available  Engineering Lab 3 is available 09:00–10:00.",
+    "decision_after": "Available  Engineering Lab 3 is available 09:00–10:00.",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | Engineering Lab 3 is free from 09:00 to 10:00, so this time works. This is only a check, so nothing has been reserved. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e02-overlap-mock",
+    "decision_before": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "decision_after": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | Library Study Room A is not free from 09:00 to 10:00 because an existing booking covers part of that time. Try another time slot or another room. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e03-blocked-mock",
+    "decision_before": "Unavailable  Design Studio 2 is currently blocked and cannot be booked.",
+    "decision_after": "Unavailable  Design Studio 2 is currently blocked and cannot be booked.",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | Design Studio 2 is currently closed for booking, so no time slot can be reserved there. Please choose a different room. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e04-past-time-mock",
+    "decision_before": "Unavailable  The start time must be after the current time.",
+    "decision_after": "Unavailable  The start time must be after the current time.",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | The start time 07:00 has already passed, so the request cannot be accepted. Pick a start time later than the current time. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e05-invalid-time-mock",
+    "decision_before": "Unavailable  Please enter valid times in HH:MM format.",
+    "decision_after": "Unavailable  Please enter valid times in HH:MM format.",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | One of the times is not in HH:MM format. Enter both times in HH:MM format and check again. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e06-too-long-mock",
+    "decision_before": "Unavailable  Bookings may not exceed 120 minutes. This request is 180 minutes.",
+    "decision_after": "Unavailable  Bookings may not exceed 120 minutes. This request is 180 minutes.",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | The request from 09:00 to 12:00 is longer than the 120-minute limit. Shorten it to two hours or less. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e07-timeout-fallback",
+    "decision_before": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "decision_after": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "unchanged": true,
+    "panel": "Explain availability | Standard explanation (AI not used) |  | The requested time overlaps an existing booking. |  | The AI explanation took too long. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e08-api-error-fallback",
+    "decision_before": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "decision_after": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "unchanged": true,
+    "panel": "Explain availability | Standard explanation (AI not used) |  | The requested time overlaps an existing booking. |  | The AI explanation service is unavailable. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e09-contradiction-fallback",
+    "decision_before": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "decision_after": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "unchanged": true,
+    "panel": "Explain availability | Standard explanation (AI not used) |  | The requested time overlaps an existing booking. |  | The AI explanation did not pass the safety checks. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e10-invented-detail-fallback",
+    "decision_before": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "decision_after": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "unchanged": true,
+    "panel": "Explain availability | Standard explanation (AI not used) |  | The requested time overlaps an existing booking. |  | The AI explanation did not pass the safety checks. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  },
+  {
+    "shot": "e11-mobile-390",
+    "decision_before": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "decision_after": "Unavailable  Overlaps an existing booking: \"Physics Study Group\" (09:00–10:00).",
+    "unchanged": true,
+    "panel": "Explain availability | Mock explanation (demo mode, no AI model used) |  | Library Study Room A is not free from 09:00 to 10:00 because an existing booking covers part of that time. Try another time slot or another room. |  | This text only explains the result above. It is not a booking confirmation and nothing was reserved."
+  }
+]

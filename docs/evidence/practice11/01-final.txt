@@ -1,0 +1,25 @@
+== npm test ==
+ ✓ tests/regression.test.ts (34 tests) 11ms
+ ✓ tests/explain.test.ts (62 tests) 88ms
+ ✓ tests/filter.test.ts (11 tests) 6ms
+ ✓ tests/review-findings.test.ts (17 tests) 12ms
+ ✓ tests/prompt-eval.test.ts (4 tests) 9ms
+ ✓ tests/explain.ui.test.tsx (17 tests) 1973ms
+ ✓ tests/app.ui.test.tsx (4 tests) 429ms
+ Test Files  7 passed (7)
+      Tests  149 passed (149)
+   Duration  5.19s (transform 277ms, setup 0ms, collect 763ms, tests 2.53s, environment 642ms, prepare 357ms)
+
+== typecheck ==
+> tsc --noEmit -p tsconfig.app.json
+
+== lint ==
+> eslint .
+
+== build ==
+dist/index.html                   0.98 kB │ gzip:  0.48 kB
+dist/assets/index-DZI63mVE.css   17.30 kB │ gzip:  3.97 kB
+dist/assets/index-BX_uFGFP.js   175.14 kB │ gzip: 55.82 kB
+✓ built in 2.48s
+== secret grep in dist (expect no output) ==
+(end)

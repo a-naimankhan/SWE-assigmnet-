@@ -21,7 +21,7 @@ Then open the URL Vite prints (default http://localhost:5173).
 ```bash
 npm test
 ```
-`npm test` runs `vitest run`, which executes 49 tests in 3 files. Other checks:
+`npm test` runs `vitest run`, which executes 149 tests in 7 files (49 original + the Practice #11 feature and review regressions). Other checks:
 
 ```bash
 npm run typecheck
@@ -30,6 +30,13 @@ npm run typecheck
 ```bash
 npm run lint
 ```
+
+## Optional "Explain availability" (Practice #11)
+After a check, the **Explain availability** button shows a short explanation. The deterministic checker still decides; the text is labelled and never changes the status.
+- Default is a **mock** adapter (no key, no network).
+- `?llm=live` calls `/api/explain` (dev/preview server). Set `ANTHROPIC_API_KEY` (and optionally `ANTHROPIC_MODEL`) in `.env.local`; without a key the endpoint answers with mock text and the UI says so.
+- In dev builds `?llm=timeout|error|contradict|invented|long|malformed` simulates a misbehaving model.
+- Report: `docs/PRACTICE-11.md`.
 
 ## Project structure
 ```
@@ -43,6 +50,7 @@ src/
     clock.ts               FIXED_NOW = 08:00
     types.ts               read-only domain types
   components/              presentation only (filters, room list, timeline, result)
+  ai/                      Explain availability: contract, validation, adapters, prompts, server handler
   App.tsx                  UI state + wiring
 tests/
   regression.test.ts       AC1–AC6 regression suite

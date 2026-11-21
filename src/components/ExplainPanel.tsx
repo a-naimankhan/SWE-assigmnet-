@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, Loader2, Sparkles } from 'lucide-react';
-import { explainAvailability } from '@/ai/explain';
+import { MOCK_LABEL, explainAvailability } from '@/ai/explain';
 import type { ExplainAdapter, ExplainInput, ExplainOutcome } from '@/ai/explain';
 
 interface Props {
@@ -79,7 +79,7 @@ function Outcome({ outcome, adapter }: { outcome: ExplainOutcome; adapter: Expla
       <div className="mb-1.5 flex flex-wrap items-center gap-2 text-xs font-semibold text-violet-700">
         {generated ? <Sparkles className="h-3.5 w-3.5" /> : <AlertTriangle className="h-3.5 w-3.5" />}
         <span className="rounded-full bg-violet-100 px-2 py-0.5">
-          {generated ? adapter.label : 'Standard explanation (AI not used)'}
+          {generated ? (outcome.provider === 'live' ? adapter.label : MOCK_LABEL) : 'Standard explanation (AI not used)'}
         </span>
       </div>
       <p className="text-sm text-slate-700">{outcome.explanation}</p>
