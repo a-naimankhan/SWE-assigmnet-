@@ -296,3 +296,16 @@ Other checks: `npx tsc --noEmit -p tsconfig.app.json` → 0 errors; `npx eslint 
 **How tests influenced decisions.** The 30 existing tests were the safety net that allowed moving files and merging validation without fear. The AC5 test forced deep freezing instead of shallow freezing. The UI test for F5 led to computing the result from the selected room instead of storing it.
 
 **What I would improve next.** I would move the UI state into a `useRoomSearch()` hook, add an automated responsive-layout check, and index rooms by id.
+
+---
+
+## 4. Can I explain it without the AI?
+
+| Question | My answer in my own words |
+|---|---|
+| How is an overlap detected, and why is 10:00–11:00 allowed after a 09:00–10:00 booking? | Two intervals overlap when `start < booking.end` and `end > booking.start` (`intervalsOverlap` in `availability.ts`). For 10:00–11:00 after 09:00–10:00: `10:00 < 10:00` is false, so no overlap. Touching ends are allowed, so the same room can be used back to back. When I changed `<` to `<=` as a mutation, 4 tests failed. |
+| Why does a blocked room stay visible in the filtered list? | The filters check only what the student needs: capacity and equipment (`filterRooms`). Blocked is a status, not a requirement, so the room stays in the list and the student can click it and see "blocked" with the reason. It is never counted as free: `availableRooms` uses `checkAvailability`, so a blocked room that matches every filter is still not available (F3). |
+| What did the mutation check prove? | Not that the code is correct. It proved the tests can fail. I broke 6 rules on purpose (overlap `<=`, capacity `>`, equipment `some`, duration `>= 120`, shallow freeze, room switch) and each one made at least one test fail: 6 of 6 killed. Rules I did not mutate were not checked. |
+| Why `deepFreeze` instead of `Object.freeze`? | `Object.freeze(ROOMS)` freezes only the outer array. `ROOMS[0].bookings.push(...)` still works. `deepFreeze` goes through every room, booking and array. The test pushes into a room's bookings and expects a `TypeError`; the shallow-freeze mutant failed that test. |
+| Why is the current time fixed? | So the result is the same every run: tests, screenshots and the demo don't depend on when I open the app. "Now" is 08:00, so a 07:00 start is always in the past and 09:00 is always in the future. The brief also asks for it. |
+| Name one AI suggestion that was rejected and why. | The plan said bookings are not mutated with `Object.freeze` or a copy. I did not keep the shallow `Object.freeze`, because it doesn't protect the nested bookings. I used `deepFreeze` and added the `push` test. I also changed the suggested vanilla-JS layout (`main.js`, `ui/render.js`) because the project is React + TypeScript. |
