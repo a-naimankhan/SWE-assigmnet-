@@ -89,7 +89,7 @@ Prompts are in `src/ai/prompts.ts`; the structured JSON is always the user messa
 | Unsupported claim (manual check) | **1/4** ("booked by another group") | 0/4 | 0/4 |
 | Clarity | clear, but invents a cause | clear | clear, slightly more formal |
 
-**Chosen: P3** (also your choice in chat). Reasons: it is the only one that satisfies the output contract, it lists reason-code meanings so the model does not guess causes, and it tells the model to treat JSON values as data.
+**Chosen: P3** (selected by me after the comparison). Reasons: it is the only one that satisfies the output contract, it lists reason-code meanings so the model does not guess causes, and it tells the model to treat JSON values as data.
 
 **Limits of this comparison (important for the defence):** the samples (`docs/evidence/practice11/prompt-samples.json`) were written by Claude following each prompt, not produced by the app's mock and not by a live API run. One run per cell, so run-to-run consistency was **not measured**. To replace them, run the three prompts against a live model and update the file; `tests/prompt-eval.test.ts` re-scores it. Note the automatic validator cannot catch P1's "another group" claim, which is why the manual column exists.
 
