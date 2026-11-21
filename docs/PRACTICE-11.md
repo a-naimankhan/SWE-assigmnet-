@@ -111,7 +111,7 @@ Automated: 149 tests (49 old + 100 new). UI scenarios were also run in a real Ch
 | Model invents a detail | fallback, safety-check message | as expected | e10 |
 | Mobile 390 px | layout intact | OK | e11 |
 | `?llm=live` without a key | must not be labelled AI | "Mock explanation" (after fix B) | e12 |
-| UI never changes the decision | decision text identical before/after | identical in all 12 screenshot runs and all UI tests | log json |
+| UI never changes the decision | decision text identical before/after | identical in the 11 recorded runs (e01–e11) and in all UI tests | log json |
 
 Defect found by my own tests: the timeout race (`abort()` before `resolve()` made the cause "error" instead of "timeout"); fixed in the same stage.
 
