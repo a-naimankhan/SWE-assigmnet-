@@ -1,0 +1,25 @@
+{
+  "note": "Samples written by Claude (this session) by following each system prompt in src/ai/prompts.ts literally for the four inputs below. They are NOT outputs of the app's mock adapter and NOT a statistical test: one run per cell, so run-to-run consistency was not measured. Re-run against a live model with ANTHROPIC_API_KEY to replace them.",
+  "cases": {
+    "A-available": { "roomLabel": "Engineering Lab 3", "start": "09:00", "end": "10:00", "isAvailable": true, "reasonCode": "AVAILABLE" },
+    "B-overlap": { "roomLabel": "Library Study Room A", "start": "09:00", "end": "10:00", "isAvailable": false, "reasonCode": "OVERLAP" },
+    "C-blocked": { "roomLabel": "Design Studio 2", "start": "09:00", "end": "10:00", "isAvailable": false, "reasonCode": "ROOM_BLOCKED" },
+    "D-past": { "roomLabel": "Library Study Room A", "start": "07:00", "end": "08:30", "isAvailable": false, "reasonCode": "START_IN_PAST" }
+  },
+  "samples": [
+    { "prompt": "p1", "case": "A-available", "raw": "Engineering Lab 3 is available from 09:00 to 10:00 because no other booking overlaps that time, so you're good to book it.", "unsupportedClaim": false },
+    { "prompt": "p1", "case": "B-overlap", "raw": "Library Study Room A is already booked by another group from 09:00 to 10:00, so it isn't available. Try a different time or room.", "unsupportedClaim": true },
+    { "prompt": "p1", "case": "C-blocked", "raw": "Design Studio 2 is blocked, so it can't be booked right now. Please pick another room.", "unsupportedClaim": false },
+    { "prompt": "p1", "case": "D-past", "raw": "The start time 07:00 has already passed, so this request can't be accepted. Choose a later start time.", "unsupportedClaim": false },
+
+    { "prompt": "p2", "case": "A-available", "raw": "Engineering Lab 3 is free from 09:00 to 10:00, so you can use this time slot.", "unsupportedClaim": false },
+    { "prompt": "p2", "case": "B-overlap", "raw": "Library Study Room A is not free from 09:00 to 10:00 because it overlaps with an existing booking. Please choose another time or room.", "unsupportedClaim": false },
+    { "prompt": "p2", "case": "C-blocked", "raw": "Design Studio 2 is blocked, so it cannot be booked for any time. Please choose another room.", "unsupportedClaim": false },
+    { "prompt": "p2", "case": "D-past", "raw": "The start time of 07:00 has already passed, so this request cannot be accepted. Please choose a later start time.", "unsupportedClaim": false },
+
+    { "prompt": "p3", "case": "A-available", "raw": "{\"explanation\":\"Engineering Lab 3 has no conflict from 09:00 to 10:00, so this time works.\"}", "unsupportedClaim": false },
+    { "prompt": "p3", "case": "B-overlap", "raw": "{\"explanation\":\"Library Study Room A is not free from 09:00 to 10:00 because an existing booking covers part of that time. Try a different time or another room.\"}", "unsupportedClaim": false },
+    { "prompt": "p3", "case": "C-blocked", "raw": "{\"explanation\":\"Design Studio 2 is closed for booking, so no time slot can be reserved there. Please choose a different room.\"}", "unsupportedClaim": false },
+    { "prompt": "p3", "case": "D-past", "raw": "{\"explanation\":\"The start time 07:00 is not after the current time, so this request cannot be accepted. Choose a later start time.\"}", "unsupportedClaim": false }
+  ]
+}
