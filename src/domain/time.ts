@@ -22,9 +22,16 @@ export function labelToMinutes(label: string): number | null {
   return h * 60 + m;
 }
 
+export type IntervalFailureCode =
+  | 'INVALID_TIME_FORMAT'
+  | 'START_NOT_BEFORE_END'
+  | 'OUT_OF_DAY_RANGE'
+  | 'START_IN_PAST'
+  | 'EXCEEDS_MAX_DURATION';
+
 export type IntervalCheck =
   | { ok: true; start: number; end: number }
-  | { ok: false; reason: string };
+  | { ok: false; reason: string; code: IntervalFailureCode };
 
 /** True when both ends are known and 0 <= start < end <= 24:00. */
 export function isWellFormedInterval(
@@ -57,22 +64,23 @@ export function validateInterval(
   currentTime: number
 ): IntervalCheck {
   if (start === null || end === null) {
-    return { ok: false, reason: 'Please enter valid times in HH:MM format.' };
+    return { ok: false, reason: 'Please enter valid times in HH:MM format.', code: 'INVALID_TIME_FORMAT' };
   }
   if (start >= end) {
-    return { ok: false, reason: 'The start time must be earlier than the end time.' };
+    return { ok: false, reason: 'The start time must be earlier than the end time.', code: 'START_NOT_BEFORE_END' };
   }
   if (start < 0 || end > MINUTES_PER_DAY) {
-    return { ok: false, reason: 'Times must be between 00:00 and 24:00.' };
+    return { ok: false, reason: 'Times must be between 00:00 and 24:00.', code: 'OUT_OF_DAY_RANGE' };
   }
   if (start <= currentTime) {
-    return { ok: false, reason: 'The start time must be after the current time.' };
+    return { ok: false, reason: 'The start time must be after the current time.', code: 'START_IN_PAST' };
   }
   const duration = end - start;
   if (exceedsMaxDuration(duration)) {
     return {
       ok: false,
       reason: `Bookings may not exceed ${MAX_BOOKING_MINUTES} minutes. This request is ${duration} minutes.`,
+      code: 'EXCEEDS_MAX_DURATION',
     };
   }
   return { ok: true, start, end };

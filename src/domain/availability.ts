@@ -21,13 +21,13 @@ export function checkAvailability(
   const room = rooms.find((r) => r.id === roomId);
 
   if (!room) {
-    return { decision: 'unavailable', reason: 'Please select a room.' };
+    return { decision: 'unavailable', reason: 'Please select a room.', code: 'NO_ROOM_SELECTED' };
   }
 
   // AC1 + AC2: one shared validation rule
   const interval = validateInterval(params.start, params.end, currentTime);
   if (!interval.ok) {
-    return { decision: 'unavailable', reason: interval.reason };
+    return { decision: 'unavailable', reason: interval.reason, code: interval.code };
   }
   const { start, end } = interval;
 
@@ -36,6 +36,7 @@ export function checkAvailability(
     return {
       decision: 'unavailable',
       reason: `${room.name} is currently blocked and cannot be booked.`,
+      code: 'ROOM_BLOCKED',
     };
   }
 
@@ -45,11 +46,13 @@ export function checkAvailability(
     return {
       decision: 'unavailable',
       reason: `Overlaps an existing booking: "${clash.title}" (${minutesToLabel(clash.start)}–${minutesToLabel(clash.end)}).`,
+      code: 'OVERLAP',
     };
   }
 
   return {
     decision: 'available',
     reason: `${room.name} is available ${minutesToLabel(start)}–${minutesToLabel(end)}.`,
+    code: 'AVAILABLE',
   };
 }
