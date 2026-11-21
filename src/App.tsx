@@ -18,14 +18,29 @@ import { Timeline } from '@/components/Timeline';
 import { ResultPanel } from '@/components/ResultPanel';
 import { TimeField } from '@/components/TimeField';
 import { SectionHeading } from '@/components/SectionHeading';
+import { ExplainPanel } from '@/components/ExplainPanel';
+import { buildExplainInput } from '@/ai/explain';
+import type { ExplainAdapter } from '@/ai/explain';
+import { createMockAdapter } from '@/ai/mockAdapter';
 
 interface AppProps {
   /** Injected in tests; defaults to the fictional catalog. */
   rooms?: readonly Room[];
   currentTime?: number;
+  /** Source of the optional "Explain availability" text; defaults to the mock. */
+  explainAdapter?: ExplainAdapter;
+  /** Timeout for the explanation call; shortened in tests. */
+  explainTimeoutMs?: number;
 }
 
-export default function App({ rooms = ROOMS, currentTime = FIXED_NOW }: AppProps) {
+const DEFAULT_ADAPTER = createMockAdapter();
+
+export default function App({
+  rooms = ROOMS,
+  currentTime = FIXED_NOW,
+  explainAdapter = DEFAULT_ADAPTER,
+  explainTimeoutMs,
+}: AppProps) {
   // --- requirements (F1, F2) ---
   const [attendeesInput, setAttendeesInput] = useState<string>('');
   const [equipment, setEquipment] = useState<readonly Equipment[]>([]);
@@ -62,6 +77,13 @@ export default function App({ rooms = ROOMS, currentTime = FIXED_NOW }: AppProps
           })
         : null,
     [checked, selectedRoom, rooms, startMin, endMin, currentTime]
+  );
+
+  // Minimal, derived only from the checker's result (never from raw user text).
+  const explainInput = useMemo(
+    () =>
+      result && selectedRoom ? buildExplainInput(selectedRoom, result, startMin, endMin) : null,
+    [result, selectedRoom, startMin, endMin]
   );
 
   const duration = durationOf(startMin, endMin);
@@ -213,6 +235,14 @@ export default function App({ rooms = ROOMS, currentTime = FIXED_NOW }: AppProps
         <section>
           <SectionHeading step={3} title="Result" />
           <ResultPanel result={result} />
+          {explainInput && (
+            <ExplainPanel
+              key={JSON.stringify(explainInput)}
+              input={explainInput}
+              adapter={explainAdapter}
+              timeoutMs={explainTimeoutMs}
+            />
+          )}
         </section>
 
         <footer className="pt-2 text-center text-xs text-slate-400">
