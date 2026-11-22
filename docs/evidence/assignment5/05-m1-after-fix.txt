@@ -1,0 +1,25 @@
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   × output validation (AC2) > accepts every mock template for every reason code 9ms
+   × explainAvailability: failure handling (AC4) > returns generated text from the mock adapter 6ms
+   × Finding 1: output guard must reject contradictions and invented details (AC2) > still accepts every honest wording used by the mock, fallback and prompt samples 8ms
+   × Finding 4: negated wording is legitimate, not a contradiction > accepts for an available result: Engineering Lab 3 is available from 09:00 to 10:00 because no other booking overlaps that time. 1ms
+   × prompt comparison (Task #04) > validator accepts all honest free-text samples (the "no ... overlaps" false positive is fixed) 7ms
+   × Explain availability UI (AC1-AC5) > available: explanation shown, decision unchanged, labelled as mock and not a booking 1188ms
+   × Explain availability UI (AC1-AC5) > drops a stale explanation when room or time changes 1162ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/explain.test.ts > output validation (AC2) > accepts every mock template for every reason code
+ FAIL  tests/explain.test.ts > explainAvailability: failure handling (AC4) > returns generated text from the mock adapter
+ FAIL  tests/explain.ui.test.tsx > Explain availability UI (AC1-AC5) > available: explanation shown, decision unchanged, labelled as mock and not a booking
+ FAIL  tests/explain.ui.test.tsx > Explain availability UI (AC1-AC5) > drops a stale explanation when room or time changes
+ FAIL  tests/prompt-eval.test.ts > prompt comparison (Task #04) > validator accepts all honest free-text samples (the "no ... overlaps" false positive is fixed)
+ FAIL  tests/review-findings.test.ts > Finding 1: output guard must reject contradictions and invented details (AC2) > still accepts every honest wording used by the mock, fallback and prompt samples
+ FAIL  tests/review-findings.test.ts > Finding 4: negated wording is legitimate, not a contradiction > accepts for an available result: Engineering Lab 3 is available from 09:00 to 10:00 because no other booking overlaps that time.
+ Test Files  4 failed | 4 passed (8)
+      Tests  7 failed | 154 passed (161)
+## attempt 1 (window=2 words, clause-bound): full suite -> 7 existing tests failed (see above); window too tight, replaced by window=4 + clause breaks
+## attempt 2:
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+ Test Files  8 passed (8)
+      Tests  161 passed (161)

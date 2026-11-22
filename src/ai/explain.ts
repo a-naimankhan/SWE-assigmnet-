@@ -145,10 +145,21 @@ const CLAIMS_NOT_FREE =
 const NEGATION = /\b(?:no|not|without|never|nothing|nor|none)\b|n't\b/i;
 const TITLES = /^(?:dr|prof|professor|mr|mrs|ms|miss|mx)\.?$/i;
 
-/** True when `pattern` matches a claim that is not negated within the 4 preceding words. */
+/** Clause boundaries: punctuation, or a conjunction that starts a new statement. */
+const CLAUSE_BREAK = /[,;:.!?]|\b(?:so|but|and|because|then|although|though|however)\b/i;
+
+/**
+ * True when `pattern` matches a claim that is not negated. A negation only
+ * counts when it is in the same clause as the claim (no punctuation or
+ * conjunction in between) and within the 4 words before it. Before, the window
+ * ignored clause boundaries, so "Nothing blocks you, go ahead" let "Nothing"
+ * cancel the claim "go ahead". Still a heuristic: a wrongly rejected sentence
+ * only shows the fixed fallback text (fail-safe direction).
+ */
 function hasPositiveClaim(text: string, pattern: RegExp): boolean {
   for (const m of text.matchAll(pattern)) {
-    const before = text.slice(0, m.index).split(/\s+/).slice(-4).join(' ');
+    const clause = text.slice(0, m.index).split(new RegExp(CLAUSE_BREAK, 'gi')).pop() ?? '';
+    const before = clause.split(/\s+/).filter(Boolean).slice(-4).join(' ');
     if (!NEGATION.test(before)) return true;
   }
   return false;

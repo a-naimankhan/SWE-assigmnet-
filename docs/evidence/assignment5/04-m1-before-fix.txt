@@ -1,0 +1,10 @@
+   × negation must be local to the claim it negates > rejects a contradiction of an unavailable result: Nothing blocks you, go ahead and book it. 11ms
+   × negation must be local to the claim it negates > rejects a contradiction of an unavailable result: No problem so go ahead and book it. 1ms
+   × negation must be local to the claim it negates > rejects a contradiction of an unavailable result: There is no issue, you can book it. 1ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/guard-negation.test.ts > negation must be local to the claim it negates > rejects a contradiction of an unavailable result: Nothing blocks you, go ahead and book it.
+ FAIL  tests/guard-negation.test.ts > negation must be local to the claim it negates > rejects a contradiction of an unavailable result: No problem so go ahead and book it.
+ FAIL  tests/guard-negation.test.ts > negation must be local to the claim it negates > rejects a contradiction of an unavailable result: There is no issue, you can book it.
+AssertionError: expected true to be false // Object.is equality
+ Test Files  1 failed (1)
+      Tests  3 failed | 9 passed (12)
