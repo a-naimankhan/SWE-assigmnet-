@@ -1,0 +1,15 @@
+P1 [unavailable] "No problem, Room 101 is free from 09:00 to 10:00." -> rejected: explanation contradicts an unavailable result.
+P1 [unavailable] "There is no reason to worry, the room is open from 09:00 to 10:00." -> rejected: explanation contradicts an unavailable result.
+P1 [unavailable] "Room 101 is free from 09:00 to 10:00." -> rejected: explanation contradicts an unavailable result.
+P1 [available] "There is no doubt Room 101 is booked from 09:00 to 10:00." -> rejected: explanation contradicts an available result.
+P1 [available] "Room 101 is booked from 09:00 to 10:00." -> rejected: explanation contradicts an available result.
+P2 MAX_BODY_BYTES=2048 body.length=1916 Buffer.byteLength=3816 -> status 400
+P3 500 rapid requests -> 500 x HTTP 200, provider (paid API) called 500 times, none throttled
+P4 provider threw "Provider HTTP 401" -> status 502 body {"error":"Provider unavailable."}; console calls: 0
+P5 labelToMinutes("24:00") = null
+P5 check 23:00-24:00 -> INVALID_TIME_FORMAT: Please enter valid times in HH:MM format.
+P5 check 10:00-25:00(1500min) -> OUT_OF_DAY_RANGE: Times must be between 00:00 and 24:00.
+P5 validateExplainInput accepts end "24:00": true
+P7 "9:00" vs "09:00" -> rejected: explanation mentions an unknown time (9:00).
+ Test Files  1 passed (1)
+      Tests  6 passed (6)

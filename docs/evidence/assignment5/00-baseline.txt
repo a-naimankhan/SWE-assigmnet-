@@ -1,0 +1,64 @@
+# Baseline (before any Assignment #05 change)
+date: 2026-11-22T18:02:11Z
+commit: 38e585e15c03d2dd47713909ec4345b2bf8cd53d (origin/feat/week-11-tasks)
+node: v22.23.5  npm: 10.9.9
+
+$ npm test
+
+> vite-react-typescript-starter@0.0.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /home/claude/a-naimankhan/SWE-assigmnet-
+
+ ✓ tests/regression.test.ts (34 tests) 9ms
+ ✓ tests/explain.test.ts (62 tests) 83ms
+ ✓ tests/filter.test.ts (11 tests) 8ms
+ ✓ tests/review-findings.test.ts (17 tests) 13ms
+ ✓ tests/prompt-eval.test.ts (4 tests) 10ms
+ ✓ tests/explain.ui.test.tsx (17 tests) 2000ms
+ ✓ tests/app.ui.test.tsx (4 tests) 382ms
+
+ Test Files  7 passed (7)
+      Tests  149 passed (149)
+   Start at  23:02:11
+   Duration  5.40s (transform 291ms, setup 0ms, collect 729ms, tests 2.50s, environment 723ms, prepare 472ms)
+
+exit=0
+
+$ npm run typecheck
+
+> vite-react-typescript-starter@0.0.0 typecheck
+> tsc --noEmit -p tsconfig.app.json
+
+exit=0
+
+$ npm run lint
+
+> vite-react-typescript-starter@0.0.0 lint
+> eslint .
+
+exit=0
+
+$ npm run build
+
+> vite-react-typescript-starter@0.0.0 build
+> vite build
+
+vite v5.4.8 building for production...
+transforming...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1587 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.98 kB │ gzip:  0.48 kB
+dist/assets/index-DZI63mVE.css   17.30 kB │ gzip:  3.97 kB
+dist/assets/index-BX_uFGFP.js   175.14 kB │ gzip: 55.82 kB
+✓ built in 2.65s
+exit=0
+
+$ npm audit --omit=dev
+found 0 vulnerabilities
+exit=0
