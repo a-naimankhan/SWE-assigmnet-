@@ -1,0 +1,10 @@
+# Task 3 check: does the compiler notice a new ReasonCode that is missing from the explain contract?
+
+## BEFORE (baseline explain.ts, REASON_CODES hand-written array) + ZZ_NEW added to ReasonCode
+      1 src/ai/explain.ts
+      1 src/ai/templates.ts
+(note: no error is reported for the REASON_CODES array itself; it would silently reject ZZ_NEW at runtime)
+
+## AFTER (REASON_CODE_MAP: Record<ReasonCode,true>) + ZZ_NEW added to ReasonCode
+src/ai/explain.ts(25,7): error TS2741: Property 'ZZ_NEW' is missing in type '{ AVAILABLE: true; NO_ROOM_SELECTED: true; INVALID_TIME_FORMAT: true; START_NOT_BEFORE_END: true; OUT_OF_DAY_RANGE: true; START_IN_PAST: true; EXCEEDS_MAX_DURATION: true; ROOM_BLOCKED: true; OVERLAP: true; }' but required in type 'Record<ReasonCode, true>'.
+src/ai/explain.ts(222,9): error TS2741: Property 'ZZ_NEW' is missing in type '{ AVAILABLE: string; NO_ROOM_SELECTED: string; INVALID_TIME_FORMAT: string; START_NOT_BEFORE_END: string; OUT_OF_DAY_RANGE: string; START_IN_PAST: string; EXCEEDS_MAX_DURATION: string; ROOM_BLOCKED: string; OVERLAP: string; }' but required in type 'Record<ReasonCode, string>'.

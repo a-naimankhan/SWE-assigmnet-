@@ -17,17 +17,24 @@ export const MAX_SENTENCES = 2;
 export const DEFAULT_TIMEOUT_MS = 3000;
 export const MOCK_LABEL = 'Mock explanation (demo mode, no AI model used)';
 
-export const REASON_CODES: readonly ReasonCode[] = [
-  'AVAILABLE',
-  'NO_ROOM_SELECTED',
-  'INVALID_TIME_FORMAT',
-  'START_NOT_BEFORE_END',
-  'OUT_OF_DAY_RANGE',
-  'START_IN_PAST',
-  'EXCEEDS_MAX_DURATION',
-  'ROOM_BLOCKED',
-  'OVERLAP',
-];
+/**
+ * Compile-time exhaustive: adding a member to `ReasonCode` without listing it
+ * here is a type error, so the server can never reject a code the checker
+ * produces. REASON_CODES is derived from this map (single place to edit).
+ */
+const REASON_CODE_MAP: Record<ReasonCode, true> = {
+  AVAILABLE: true,
+  NO_ROOM_SELECTED: true,
+  INVALID_TIME_FORMAT: true,
+  START_NOT_BEFORE_END: true,
+  OUT_OF_DAY_RANGE: true,
+  START_IN_PAST: true,
+  EXCEEDS_MAX_DURATION: true,
+  ROOM_BLOCKED: true,
+  OVERLAP: true,
+};
+
+export const REASON_CODES = Object.keys(REASON_CODE_MAP) as readonly ReasonCode[];
 
 /** Minimal context sent to the adapter. No booking titles, owners or user text. */
 export interface ExplainInput {
