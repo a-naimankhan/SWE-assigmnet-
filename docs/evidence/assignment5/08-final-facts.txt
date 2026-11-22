@@ -1,0 +1,49 @@
+# Final facts (commit ec0f30f)
+
+$ grep -rn createAnthropicProvider tests/
+tests/explain.test.ts:22:  createAnthropicProvider,
+tests/explain.test.ts:265:    const provider = createAnthropicProvider('sk-test', { fetchImpl: fakeFetch });
+
+$ grep -c -i -E "x-api-key|anthropic|ANTHROPIC_API_KEY" dist/assets/*.js
+0
+
+$ npm test (per file)
+ ✓ tests/regression.test.ts (34 tests) 14ms
+ ✓ tests/explain.test.ts (62 tests) 91ms
+ ✓ tests/endpoint-hardening.test.ts (12 tests) 10ms
+ ✓ tests/filter.test.ts (11 tests) 10ms
+ ✓ tests/review-findings.test.ts (17 tests) 13ms
+ ✓ tests/prompt-eval.test.ts (4 tests) 7ms
+ ✓ tests/guard-negation.test.ts (12 tests) 10ms
+ ✓ tests/explain.ui.test.tsx (17 tests) 2002ms
+ ✓ tests/app.ui.test.tsx (4 tests) 392ms
+ Test Files  9 passed (9)
+      Tests  173 passed (173)
+
+$ npm audit (all deps) summary
+23 vulnerabilities (2 low, 7 moderate, 11 high, 3 critical)
+
+$ git diff --shortstat a5-baseline HEAD -- src tests vite.config.ts AGENTS.md
+ 7 files changed, 340 insertions(+), 29 deletions(-)
+
+$ git log --oneline a5-baseline..HEAD
+ec0f30f fix(ai): harden /api/explain - byte limit, 413, rate limit, catalog labels (R-01, R-08)
+7051147 fix(ai): keep negation local to its clause in the output guard (R-02)
+30e4ba9 refactor(ai): derive REASON_CODES from an exhaustive Record<ReasonCode, true>
+d067c75 docs(agents): add architecture, safe/forbidden commands, test expectations and review gates
+f35ba4f docs(a5): record Assignment #05 baseline and verification probes
+
+$ git branch -a
+* feat/assignment-5
+  main
+  remotes/origin/0a
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/backup-current
+  remotes/origin/backup-fixed
+  remotes/origin/feat/week-11-tasks
+  remotes/origin/main
+  remotes/origin/master
+
+# Baseline bundle check (clean worktree of a5-baseline, built just now)
+$ grep -c -i -E "x-api-key|anthropic|ANTHROPIC_API_KEY" dist/assets/*.js
+0
