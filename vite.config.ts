@@ -2,11 +2,13 @@ import { defineConfig, loadEnv, type Connect, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import {
-  MAX_BODY_BYTES,
   createAnthropicProvider,
+  createBodyCollector,
+  createRateLimiter,
   handleExplain,
   mockProvider,
 } from './src/ai/serverHandler';
+import { ROOMS } from './src/data/rooms';
 
 /**
  * Dev/preview-only server side of the "Explain availability" adapter.
@@ -20,6 +22,9 @@ function explainApi(mode: string): Plugin {
     ? createAnthropicProvider(key, { model: env.ANTHROPIC_MODEL || undefined })
     : mockProvider;
 
+  const limiter = createRateLimiter();
+  const allowedLabels: ReadonlySet<string> = new Set(ROOMS.map((r) => r.name));
+
   const middleware: Connect.NextHandleFunction = (req, res) => {
     const send = (status: number, body: unknown) => {
       res.statusCode = status;
@@ -27,19 +32,24 @@ function explainApi(mode: string): Plugin {
       res.end(JSON.stringify(body));
     };
     if (req.method !== 'POST') return send(405, { error: 'Method not allowed.' });
+    if (!limiter.allow(req.socket.remoteAddress ?? 'unknown')) {
+      return send(429, { error: 'Too many requests.' });
+    }
 
-    let body = '';
+    const body = createBodyCollector();
     let tooLarge = false;
-    req.on('data', (chunk: string | Uint8Array) => {
-      body += chunk;
-      if (body.length > MAX_BODY_BYTES) {
+    req.on('data', (chunk: Uint8Array | string) => {
+      if (tooLarge) return;
+      if (!body.push(chunk)) {
         tooLarge = true;
-        req.destroy();
+        res.setHeader('Connection', 'close');
+        send(413, { error: 'Request too large.' });
+        res.once('finish', () => req.destroy());
       }
     });
     req.on('end', async () => {
       if (tooLarge) return;
-      const out = await handleExplain(body, provider);
+      const out = await handleExplain(body.text(), provider, undefined, { allowedLabels });
       send(out.status, out.body);
     });
   };

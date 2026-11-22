@@ -1,0 +1,26 @@
+# M2 check against a real 'vite' dev server on 127.0.0.1:5199 (no API key -> mock provider)
+date: 2026-11-22T18:08:29Z  commit-base: 7051147 + working tree
+
+$ POST valid catalog room
+{"explanation":"Library Study Room A is not free from 09:00 to 10:00 because an existing booking covers part of that time. Try another time slot or another room.","provider":"mock"}
+HTTP 200
+
+$ POST label that is not a catalog room (prompt-injection style)
+{"error":"Unknown room."}
+HTTP 400
+
+$ POST 3000-byte body
+{"error":"Request too large."}
+HTTP 413
+
+$ POST 1500 two-byte characters (1500 chars but ~3000 bytes)
+{"error":"Request too large."}
+HTTP 413
+
+$ GET (method check)
+{"error":"Method not allowed."}
+HTTP 405
+
+$ 30 more rapid valid POSTs: status code histogram (limit = 20 per 60 s per client; 4 counted POSTs already used above; the GET is refused with 405 before the limiter)
+     16 200
+     14 429

@@ -48,7 +48,7 @@ If your tool does not load this file automatically, paste sections "Hard rules",
 Note: `typecheck` does not cover `vite.config.ts` (known gap, see `docs/ASSIGNMENT-05.md`, risk R-05). Review that file by hand.
 
 ## Conventions
-- Import app modules with the `@/` alias; files shared with the server handler (`src/ai/*`) use relative imports only. (`.bolt/prompt` says to use `@/` everywhere; for `src/ai/*` this file wins.)
+- Import app modules with the `@/` alias; files that `vite.config.ts` also loads (`src/ai/*`, `src/data/rooms.ts` and what they import) use relative imports only, because the config has no `@/` alias. (`.bolt/prompt` says to use `@/` everywhere; for those files this file wins.)
 - Domain changes must stay additive and keep existing tests green.
 - Every behaviour change needs a test; AI-generated findings need evidence (file/line, test or reproduction) before a fix.
 - Commit one change at a time with a conventional message (`fix:`, `test:`, `docs:` ...).

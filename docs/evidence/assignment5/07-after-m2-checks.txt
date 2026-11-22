@@ -1,0 +1,15 @@
+# (first run had 1 lint error in my new test file: prefer-const; fixed, results below are the re-run)
+$ npm test
+ Test Files  9 passed (9)
+      Tests  173 passed (173)
+exit=0
+$ npm run typecheck
+exit=0
+$ npm run lint
+exit=0
+$ npm run build
+✓ 1587 modules transformed.
+✓ built in 2.21s
+exit=0
+$ npm audit --omit=dev
+found 0 vulnerabilities

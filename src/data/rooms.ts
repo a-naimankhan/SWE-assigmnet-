@@ -1,5 +1,6 @@
-import { deepFreeze } from '@/domain/immutable';
-import type { Room } from '@/domain/types';
+// Relative imports: this file is also loaded by vite.config.ts, which has no `@/` alias.
+import { deepFreeze } from '../domain/immutable';
+import type { Room } from '../domain/types';
 
 /**
  * Fictional campus room catalog. Every room has its own bookings (minutes
