@@ -1,0 +1,27 @@
+# Practice #13 final checks — 2026-11-24 19:55
+branch feat/assignment-week-13 @ e03ad70 (+ uncommitted report files)
+
+$ npm test
+ ✓ tests/guard-negation.test.ts (12 tests) 7ms
+ ✓ tests/prompt-eval.test.ts (4 tests) 8ms
+ ✓ tests/filter.test.ts (11 tests) 8ms
+ ✓ tests/regression.test.ts (34 tests) 9ms
+ ✓ tests/slot-contract.test.ts (23 tests) 7ms
+ ✓ tests/endpoint-hardening.test.ts (12 tests) 8ms
+ ✓ tests/review-findings.test.ts (17 tests) 12ms
+ ✓ tests/explain.test.ts (62 tests) 95ms
+ ✓ tests/slot.ui.test.tsx (10 tests) 365ms
+ ✓ tests/app.ui.test.tsx (4 tests) 312ms
+ ✓ tests/explain.ui.test.tsx (17 tests) 1418ms
+ Test Files  11 passed (11)
+      Tests  206 passed (206)
+
+$ npm run typecheck
+exit 0
+
+$ npm run lint
+exit 0
+
+$ npm run build
+dist/assets/index-KktE0Osk.js   184.12 kB │ gzip: 57.72 kB
+✓ built in 2.40s

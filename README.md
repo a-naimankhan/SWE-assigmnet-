@@ -40,6 +40,12 @@ After a check, the **Explain availability** button shows a short explanation. Th
 - Report: `docs/PRACTICE-11.md`.
 - `/api/explain` is a dev/preview feature: it accepts only the catalog room names, limits the body to 2048 bytes (413) and 20 requests/minute per client (429). Never start the server with `--host`.
 
+## Practice #13 (Lesson 12): code-based vs low-code
+- Code-based single-room checker: `npm run dev`, then open `/#/single-room`. Live demo: https://a-naimankhan.github.io/SWE-assigmnet-/#/single-room
+- Shared contract and T1–T8: `practice13/shared/contract.json`, sheet `docs/PRACTICE-13-REQUIREMENTS.md`
+- Low-code (Appsmith) export and script: `practice13/lowcode/` (how to run it is in its README)
+- Report: `docs/PRACTICE-13.md`, PDF `docs/Practice13-Report.pdf`; evidence `docs/evidence/practice13/`, screenshots `docs/screenshots/practice13/`
+
 ## Project structure
 ```
 src/
