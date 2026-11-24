@@ -1,0 +1,24 @@
+# Practice #13 (Lesson 12) baseline — 2026-11-24 18:22:16
+branch: feat/assignment-week-13 @ a77ebb0 (from feat/assignment-5 a77ebb0)
+node v24.22.1, npm 11.19.1
+
+$ npm test
+ ✓ tests/app.ui.test.tsx (4 tests) 288ms
+ ✓ tests/explain.ui.test.tsx (17 tests) 1518ms
+
+ Test Files  9 passed (9)
+      Tests  173 passed (173)
+   Start at  18:22:20
+   Duration  5.09s (transform 610ms, setup 0ms, collect 2.22s, tests 1.98s, environment 2.73s, prepare 2.12s)
+
+
+$ npm run typecheck
+exit 0
+
+$ npm run lint
+
+$ npm run build
+dist/index.html                   0.98 kB │ gzip:  0.47 kB
+dist/assets/index-DZI63mVE.css   17.30 kB │ gzip:  3.97 kB
+dist/assets/index-Dq04q-w_.js   175.29 kB │ gzip: 55.91 kB
+✓ built in 2.95s
