@@ -1,11 +1,11 @@
 # AI-Driven Software Engineering – Practice #13 (Lesson #12)
 ## Code-based vs low-code: Smart Campus Room Availability Checker
 
-Student : Naimankhan Aibar, 24B031919 · Group : Tuesday 16:00-19:00
-AI tool : Claude Code (desktop app), model Claude Opus 5.5 (`claude-opus-5-5`)
-Low-code platform : Appsmith Community Edition v2.7.2, self-hosted in Docker on `127.0.0.1:8080`
-Repository : https://github.com/a-naimankhan/SWE-assigmnet- · branch `feat/assignment-week-13`
-Live demo (code-based) : https://a-naimankhan.github.io/SWE-assigmnet-/#/single-room
+Student : Naimankhan Aibar, 24B031919 · Group : Tuesday 16:00-19:00  
+AI tool : Claude Code (desktop app), model Claude Opus 5.5 (`claude-opus-5-5`)  
+Low-code platform : Appsmith Community Edition v2.7.2, self-hosted in Docker on `127.0.0.1:8080`  
+Repository : https://github.com/a-naimankhan/SWE-assigmnet- · branch `feat/assignment-week-13`  
+Live demo (code-based) : https://a-naimankhan.github.io/SWE-assigmnet-/#/single-room  
 Low-code export : `practice13/lowcode/appsmith-export.json` (no public link, see "Labels" below)
 
 **Who did what.** The AI agent built both solutions, ran all tests and took the screenshots. I gave the task, picked the base branch, Appsmith and GitHub Pages, and switched on Pages in the repo settings. All times below are agent minutes.
