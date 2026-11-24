@@ -1,0 +1,43 @@
+{
+  "description": "Shared contract for Practice #13 (Lesson 12). Both the code-based and the low-code solution use exactly this data and these cases.",
+  "currentTime": "08:00",
+  "room": {
+    "id": "r1",
+    "name": "Library Study Room A",
+    "bookings": [
+      { "id": "b1", "title": "Physics Study Group", "start": "09:00", "end": "10:00" },
+      { "id": "b2", "title": "Robotics Club", "start": "13:30", "end": "14:30" },
+      { "id": "b3", "title": "Thesis Prep", "start": "19:00", "end": "20:00" }
+    ]
+  },
+  "reasonCodes": {
+    "AVAILABLE": "Room is available for the requested interval.",
+    "INVALID_TIME_FORMAT": "Start time is empty or not HH:MM.",
+    "INVALID_DURATION": "Duration is empty, not a whole number, or not greater than 0.",
+    "OUT_OF_DAY_RANGE": "The interval ends after 24:00.",
+    "START_IN_PAST": "Start time is not after the current time (08:00).",
+    "EXCEEDS_MAX_DURATION": "Duration is more than 120 minutes.",
+    "ROOM_BLOCKED": "The room is blocked.",
+    "OVERLAP": "The interval overlaps an existing booking."
+  },
+  "checkOrder": [
+    "INVALID_TIME_FORMAT",
+    "INVALID_DURATION",
+    "OUT_OF_DAY_RANGE",
+    "START_IN_PAST",
+    "EXCEEDS_MAX_DURATION",
+    "ROOM_BLOCKED",
+    "OVERLAP",
+    "AVAILABLE"
+  ],
+  "cases": [
+    { "id": "T1", "title": "valid free interval", "startTime": "10:30", "durationMinutes": 60, "roomBlocked": false, "expected": { "available": true, "reasonCode": "AVAILABLE" } },
+    { "id": "T2", "title": "overlap with an existing booking", "startTime": "09:30", "durationMinutes": 60, "roomBlocked": false, "expected": { "available": false, "reasonCode": "OVERLAP" } },
+    { "id": "T3", "title": "blocked room", "startTime": "10:30", "durationMinutes": 60, "roomBlocked": true, "expected": { "available": false, "reasonCode": "ROOM_BLOCKED" } },
+    { "id": "T4", "title": "duration = 0", "startTime": "10:30", "durationMinutes": 0, "roomBlocked": false, "expected": { "available": false, "reasonCode": "INVALID_DURATION" } },
+    { "id": "T5", "title": "duration = 121 minutes", "startTime": "10:30", "durationMinutes": 121, "roomBlocked": false, "expected": { "available": false, "reasonCode": "EXCEEDS_MAX_DURATION" } },
+    { "id": "T6", "title": "past start time", "startTime": "07:00", "durationMinutes": 60, "roomBlocked": false, "expected": { "available": false, "reasonCode": "START_IN_PAST" } },
+    { "id": "T7", "title": "adjacent non-overlapping interval", "startTime": "10:00", "durationMinutes": 60, "roomBlocked": false, "expected": { "available": true, "reasonCode": "AVAILABLE" } },
+    { "id": "T8", "title": "booking data unchanged after checks", "runAfter": ["T1", "T2", "T3", "T4", "T5", "T6", "T7"], "expected": { "bookingsUnchanged": true } }
+  ]
+}
