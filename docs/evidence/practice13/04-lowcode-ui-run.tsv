@@ -1,0 +1,14 @@
+T1	10:30	60	blocked=false	Available	AVAILABLE - Library Study Room A is available 10:30–11:30.
+T2	09:30	60	blocked=false	Unavailable	OVERLAP - Overlaps an existing booking: "Physics Study Group" (09:00–10:00).
+T3	10:30	60	blocked=true	Unavailable	ROOM_BLOCKED - Library Study Room A is currently blocked and cannot be booked.
+T4	10:30	0	blocked=false	Unavailable	INVALID_DURATION - Duration must be a whole number of minutes greater than 0.
+T5	10:30	121	blocked=false	Unavailable	EXCEEDS_MAX_DURATION - Bookings may not exceed 120 minutes. This request is 121 minutes.
+T6	07:00	60	blocked=false	Unavailable	START_IN_PAST - The start time must be after the current time.
+T7	10:00	60	blocked=false	Available	AVAILABLE - Library Study Room A is available 10:00–11:00.
+T8	bookings before == after: true	Download 3 Records Page of 1 id title start end b1 Physics Study Group 09:00 10:00 b2 Robotics Club 13:30 14:30 b3 Thesis Prep 19:00 20:00
+probe duration="<img src=x onerror=alert(1)>" -> INVALID_DURATION - Duration must be a whole number of minutes greater than 0. | injected elements: 0
+probe duration="\"><script>alert(1)</script>" -> INVALID_DURATION - Duration must be a whole number of minutes greater than 0. | injected elements: 0
+probe start="<img src=x onerror=alert(1)>" -> INVALID_TIME_FORMAT - Please enter a valid start time in HH:MM format.
+alert dialogs fired: 0
+mobile 390px: scrollWidth=390
+anonymous visit to app URL -> http://127.0.0.1:8080/user/login?redirectUrl=http%3A%2F%2F127.0.0.1%3A8080%2Fapp%2Fmy-first-application%2Fpage1-6b05a2609915fa07da5049d1

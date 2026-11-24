@@ -1,0 +1,5 @@
+lowcode setup start 18:31:19
+lowcode setup (container ready, fresh volume after failed first start) 19:40:05
+lowcode implementation start (editor opened) 19:43:02
+lowcode implementation done (deployed, editor T1 ok) 19:47:01
+lowcode testing done 19:53:11

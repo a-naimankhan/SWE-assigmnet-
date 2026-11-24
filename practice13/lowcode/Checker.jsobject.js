@@ -1,8 +1,9 @@
-// Appsmith JS Object "Checker" (low-code track, Practice #13).
-// Pasted into Appsmith's JS editor; this file is the version-controlled copy.
-// Widgets used: StartTime (Input), Duration (Input, number), Blocked (Switch),
-// CheckBtn (Button), ResultText / CodeText / MessageText (Text), BookingsTable (Table).
 export default {
+  // Appsmith JS Object "Checker" (low-code track, Practice #13).
+  // Pasted into Appsmith's JS editor; this file is the version-controlled copy.
+  // Appsmith requires the file to start with `export default`.
+  // Widgets used: StartTime (Input), Duration (Input, text), Blocked (Switch),
+  // CheckBtn (Button), ResultText / MessageText (Text), BookingsTable (Table).
   currentTime: '08:00',
   maxMinutes: 120,
   bookings: [

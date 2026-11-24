@@ -21,3 +21,6 @@ dist-ssr
 *.sln
 *.sw?
 .env
+
+# Practice #13 local Appsmith test credentials
+practice13/lowcode/appsmith-local.env
