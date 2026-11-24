@@ -63,6 +63,8 @@ function explainApi(mode: string): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // GitHub Pages serves the site from /<repo>/; local dev and tests keep '/'.
+  base: process.env.PAGES_BASE ?? '/',
   plugins: [react(), explainApi(mode)],
   resolve: {
     alias: {
