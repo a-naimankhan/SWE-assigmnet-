@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
+import Root from './Root.tsx';
 import { selectAdapter } from './ai';
 import './index.css';
 
@@ -9,6 +9,6 @@ const adapter = selectAdapter(window.location.search, import.meta.env.DEV);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App explainAdapter={adapter} />
+    <Root explainAdapter={adapter} />
   </StrictMode>
 );

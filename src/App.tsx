@@ -127,6 +127,9 @@ export default function App({
               Prototype · fictional sample data · no booking is saved
             </p>
           </div>
+          <a href="#/single-room" className="ml-auto text-sm font-medium text-teal-700 hover:underline">
+            Single-room checker
+          </a>
         </div>
       </header>
 
