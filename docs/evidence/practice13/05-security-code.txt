@@ -1,0 +1,30 @@
+# Practice #13 security evidence (code-based track) — 2026-11-24 18:28
+
+$ npm audit --omit=dev
+found 0 vulnerabilities
+
+$ npm audit (incl. dev)
+23 vulnerabilities (2 low, 7 moderate, 11 high, 3 critical) - all in devDependencies (build/test/lint toolchain: @babel/*, @eslint/plugin-kit, @humanfs/node, @vitest/mocker, vite/esbuild ...), none in the shipped bundle (see --omit=dev above).
+
+$ grep secrets/keys in dist/ (after npm run build)
+0 matches
+
+$ grep dangerouslySetInnerHTML|innerHTML|eval( in src/
+0 matches
+
+$ git ls-files | grep -iE "\.env"
+no .env files tracked
+To address all issues (including breaking changes), run:
+
+# DAST-style manual runtime checks (local dev server http://localhost:5174 only, Edge via playwright-core)
+duration="<img src=x onerror=alert(1)>" -> INVALID_DURATION | "Duration must be a whole number of minutes greater than 0." | injected elements: 0
+duration="\"><script>alert(1)</script>" -> INVALID_DURATION | "Duration must be a whole number of minutes greater than 0." | injected elements: 0
+duration="60; DROP TABLE bookings" -> INVALID_DURATION | "Duration must be a whole number of minutes greater than 0." | injected elements: 0
+duration="1' OR '1'='1" -> INVALID_DURATION | "Duration must be a whole number of minutes greater than 0." | injected elements: 0
+start time forced to text "<svg onload=alert(1)>" -> INVALID_TIME_FORMAT
+alert dialogs fired: 0
+/api/explain with HTML room name -> 400 {"error":"roomLabel is required."}
+/api/explain GET -> 405
+
+$ netstat -ano | grep :5174 LISTEN
+  TCP    [::1]:5174   LISTENING   (loopback only, not exposed to the network)
